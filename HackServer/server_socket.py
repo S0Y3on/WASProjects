@@ -9,11 +9,18 @@ HOST = '192.168.200.146'
 PORT = 62162
 filename = "/var/log/apache2/access.log"
 
+
+def getMsg(client_socket) :
+    msg = client_socket.recv(1024)
+    return msg.decode('utf-8')
+
+def sendMsg(client_socket, msg) :
+    client_socket.send(msg)
+
 def logReset() :
     os.system("echo "" > {}".format(filename))
 
 def XXEResult(client_socket) :
-    data_transferred = 0
     if not exists(filename) :
         print("Files does not exist\n")
     else :
@@ -21,19 +28,13 @@ def XXEResult(client_socket) :
             try:
                 data = f.read(1024)
                 while data:
-                    data_transferred += client_socket.send(data)
+                    sendMsg(client_socket, data)
                     data = f.read(1024)
-            except Exception as ex:
-                print(ex)
-        print("\n [complete] \n -- %d"%data_transferred, " byte")
-
-def getMsg(client_socket) :
-    data = str()
-    msg = client_socket.recv(1024)
-    while msg :
-        data += msg.decode('utf-8')
-        msg = client_socket.recv(1024)
-    return data
+            except Exception as e:
+                print(e)
+        if getMsg(client_socket) :
+            sendMsg(client_socket, "end".encode("utf-8"))
+        print("\n [complete] XXE\n -- %d")
 
 def doSomething(client_socket, addr) :
     while True :
@@ -60,6 +61,6 @@ if __name__ == "__main__" :
             start_new_thread(doSomething, (client_socket, addr))
         except socket.error as err:
             client_socket.close()
-            print("Disconnected : {}, {}\n".format(addr, err))
+            print("Socket Error Detected : {}, {}\n".format(addr, err))
         except KeyboardInterrupt as key :
             server_socket.close()
