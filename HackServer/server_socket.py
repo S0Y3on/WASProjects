@@ -4,11 +4,9 @@ from time import sleep
 from os.path import exists
 from _thread import *
 
-# 소켓 연결할때 서버쪽에서는 자신의 로컬 ip를 적어주더라구요 ..
 HOST = '192.168.200.146'
 PORT = 62162
 filename = "/var/log/apache2/access.log"
-
 
 def getMsg(client_socket) :
     msg = client_socket.recv(1024)
