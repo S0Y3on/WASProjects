@@ -3,18 +3,29 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
 
+success = fail = 0
+
 def requestPart(param):
     URL = "https://soy3on.pythonanywhere.com" + param
+    global success
+    global fail
     header = ""
     #response = requests.post(URL,headers=header)
     response = requests.get(URL)
     if response.url == URL:
         print("OK URL: " + URL)
+        success += 1
     else:
         print("Fail URL : " + URL)
+        fail += 1
+
 
 #chrome 드라이버 경로
-chrome_driver_path = "C:/Users/남민정/WASProjects/chromedriver_win32/chromedriver.exe"
+chrome_driver_path = "E:/WASProjects/chromedriver_win32/chromedriver.exe"
+
+# 옵션 생성
+options = webdriver.ChromeOptions()
+options.add_argument("headless")
 
 #login할 admin 페이지 경로
 login_url = 'https://soy3on.pythonanywhere.com/admin/login/?next=/admin/'
@@ -23,7 +34,7 @@ login_url = 'https://soy3on.pythonanywhere.com/admin/login/?next=/admin/'
 login_id = "dream"
 login_pw = "nana0813"
 
-browser = webdriver.Chrome(chrome_driver_path)
+browser = webdriver.Chrome(chrome_driver_path,options=options)
 browser.get(login_url)
 
 #로그인 정보 입력할 칸 찾기
@@ -44,7 +55,6 @@ soup = BeautifulSoup(html,'html.parser')
 link = soup.select('a')
 
 #출력 관리자 페이지 로그인 후 접근 가능한 페이지 목록
-
 af = open('AccessPage.txt', 'w')
 sys.stdout = af
 
@@ -58,3 +68,5 @@ af.close()
 with open("AccessPage.txt", "r") as f:
     for line in f.readlines():
         requestPart(line.strip())
+
+print("Success : " , success, "Fail : " , fail)
