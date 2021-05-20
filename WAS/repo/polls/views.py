@@ -6,11 +6,8 @@ from django.http import Http404, HttpResponseNotFound
 def error(req) :
     return Http404("Not Found")
 
-def index(req) :
-    return HttpResponse("Hello, world. You're at the polls index.")
-
 def home(req) :
-    return HttpResponse("Hello, world. You're at the polls home.")
+    return render(req, "index.html")
 
 def xss(req) :
     return HttpResponse("Hello, world. You're at the polls xss.")

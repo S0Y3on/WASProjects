@@ -1,4 +1,4 @@
-#!/root/WASProjects/WAS/venv/bin/python3
+#!/root/WASProjects/WAS/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
