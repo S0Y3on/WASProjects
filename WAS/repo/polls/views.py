@@ -9,20 +9,11 @@ def error(req) :
 def home(req) :
     return render(req, "index.html")
 
-def xss(req) :
-    return HttpResponse("Hello, world. You're at the polls xss.")
+def input(req) :
+    return render(req, 'input.html')
 
-def xxe(req) :
-    return HttpResponse("Hello, world. You're at the polls xxe.")
+def check(req) :
+    return render(req, 'check.html')
 
-def brokenAccess(req) :
-    return HttpResponse("Hello, world. You're at the polls brokenAccess.")
-
-def brokenAuth(req) :
-    return HttpResponse("Hello, world. You're at the polls brokenAuth.")
-
-def injection(req) :
-    return HttpResponse("Hello, world. You're at the polls injection.")
-
-def about(req) :
-    return HttpResponse("Hello, world. You're at the polls about.")
+def res(req) :
+    return render(req, 'res.html')

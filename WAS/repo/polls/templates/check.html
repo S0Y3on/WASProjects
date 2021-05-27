@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+    <head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'assets/css/report.css' %}" />
+    </head>
+    <body>
+        <div>
+            <h2>asdf</h2>
+            <label><input type="checkbox" name="tools" value="XSS">XSS</label>
+            <label><input type="checkbox" name="tools" value="XXE">XXE</label>
+            <label><input type="checkbox" name="tools" value="Injection">Injection</label>
+            <label><input type="checkbox" name="tools" value="Broken Authentication">Broken Authentication</label>
+            <label><input type="checkbox" name="tools" value="Broken Access Control">Broken Access Control</label>
+        </div>
+        <div class="next_button">
+            <ul class="actions">
+                <li><a href="res" class="button" onclick="test()">NEXT</a></li>
+            </ul>
+        </div>
+        <script>
+            function test(){
+                var obj_len = document.getElementsByName("tools").length;
+                for(var i = 0; i < obj_len; i++){
+                    if(document.getElementsByName("tools")[i].checked == true){
+                        alert(document.getElementsByName("tools")[i].value);
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
+

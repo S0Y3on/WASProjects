@@ -66,7 +66,6 @@ input::-moz-focus-inner {
 
 input, select, textarea {
 	-moz-appearance: none;
-	-webkit-appearance: none;
 	-ms-appearance: none;
 	appearance: none;
 }
@@ -1824,7 +1823,7 @@ input, select, textarea {
 	button,
 	.button {
 		-moz-appearance: none;
-		-webkit-appearance: none;
+
 		-ms-appearance: none;
 		appearance: none;
 		-moz-transition: border-color 0.2s ease;
@@ -2310,7 +2309,7 @@ input, select, textarea {
 	select,
 	textarea {
 		-moz-appearance: none;
-		-webkit-appearance: none;
+
 		-ms-appearance: none;
 		appearance: none;
 		background: rgba(255, 255, 255, 0.05);
@@ -2385,12 +2384,12 @@ input, select, textarea {
 	input[type="checkbox"],
 	input[type="radio"] {
 		-moz-appearance: none;
-		-webkit-appearance: none;
+
 		-ms-appearance: none;
 		appearance: none;
 		display: block;
 		float: left;
-		margin-right: -2em;
+		margin-right: 0em;
 		opacity: 0;
 		width: 1em;
 		z-index: -1;
@@ -3907,12 +3906,3 @@ input, select, textarea {
 			}
 
 		}
-
-/*get URL File*/
-#URL_box {
-	position: relative;
-	left: 30%;
-	top: 70%;
-}
-/*Next Button*/
-

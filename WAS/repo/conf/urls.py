@@ -22,10 +22,8 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('home/', views.home, name='home'),
-    path('xss/', views.xss, name='xss'),
-    path('xxe/', views.xxe, name='xxe'),
-    path('brokenAccess/', views.brokenAccess, name='brokenAccess'),
-    path('brokenAuth/', views.brokenAuth, name='brokenAuth'),
-    path('injection/', views.injection, name='injection'),
-    path('about/', views.about, name='about')
+    path('home/input', views.input, name='input'),
+    path('home/check', views.check, name='check'),
+    path('home/res', views.res, name='res'),
+
 ]
