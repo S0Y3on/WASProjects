@@ -67,7 +67,6 @@ input::-moz-focus-inner {
 input, select, textarea {
 	-moz-appearance: none;
 	-ms-appearance: none;
-	appearance: none;
 }
 
 /* Basic */
@@ -2386,11 +2385,11 @@ input, select, textarea {
 		-moz-appearance: none;
 
 		-ms-appearance: none;
-		appearance: none;
+		
 		display: block;
 		float: left;
 		margin-right: 0em;
-		opacity: 0;
+		
 		width: 1em;
 		z-index: -1;
 	}
@@ -3906,3 +3905,17 @@ input, select, textarea {
 			}
 
 		}
+	
+ /*page management*/
+	.page_title{
+		position:static;
+	}
+ 	.selected_tools{
+		position: absolute;
+		border: 1px solid black;
+		width: 800px;
+	}
+	.result_info{
+		position: relative;
+		left: 100px;
+	}

@@ -24,6 +24,8 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('home/input', views.input, name='input'),
     path('home/check', views.check, name='check'),
+    path('home/check/idpw', views.idpw, name='idpw'),
     path('home/res', views.res, name='res'),
-
+    path('selectTools', views.selectTools, name='selectTools'),
+    path('getIDPW', views.getIDPW, name='getIDPW'),
 ]

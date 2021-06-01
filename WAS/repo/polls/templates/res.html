@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-{% load static %}
+{%load static %}
 
 <html>
-    <head>
+  <head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
-		<noscript><link rel="stylesheet" href="{% static 'assets/css/noscript.css' %}" /></noscript>
-    </head>
-    <body>
-        <h1>res Page<br></h1>
-    </body>
-</html>
+		<link rel="stylesheet" href="{% static 'assets/css/report.css' %}" />
+  </head>
+  <body>
+    <!----Header---->
+    <div class="page_title">
+      <h1>Result</h1>
+    </div>
 
+    <!----Side---->
+    <div class="selected_tools">
+      <nav>
+        <ul>
+          {% for tool in tools %}
+          <li><a href="">{{tool}}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+
+    <div class="result_info">
+      asdf
+    </div>
+  </body>
+</html>
