@@ -45,14 +45,10 @@ def selectTools(req) :
         return render(req, 'check.html')
 
 def getIDPW(req) :
-    id = ''
-    pw = ''
-    tools = list()
-    if req.method == "POST" :
+    if req.method == "POST":
         id = req.POST.get("id")
         pw = req.POST.get("pw")
-        tools = req.POST.get("tools")
-    
-    if id != '' and pw != '' :
+        tools = req.POST.getlist("tools")
+    if id != '' and pw != '':
         return render(req, 'res.html', {"tools" : tools})
     return render(req, 'idpw.html')

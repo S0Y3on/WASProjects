@@ -14,8 +14,14 @@
                 ID : 
                 <input type="text" name="id" />
                 Password :
-                <input type="text" name="pw" />
+                <input type="password" name="pw" />
             </div>
+              {% for tool in tools %}
+                  <input type="hidden" name="tools" value={{ tool }}>
+              {% endfor %}
             <button type="submit">Next</button>
+
+        </form>
+
     </body>
 </html>
