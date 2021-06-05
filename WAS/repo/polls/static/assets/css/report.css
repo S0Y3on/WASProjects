@@ -1830,7 +1830,7 @@ input, select, textarea {
 		-ms-transition: border-color 0.2s ease;
 		transition: border-color 0.2s ease;
 		background-color: transparent;
-		border: solid 1px !important;
+		/*border: solid 1px !important;*/
 		border-color: rgba(255, 255, 255, 0.15) !important;
 		border-radius: 3em;
 		color: #ffffff !important;
@@ -2385,11 +2385,11 @@ input, select, textarea {
 		-moz-appearance: none;
 
 		-ms-appearance: none;
-		
+
 		display: block;
 		float: left;
 		margin-right: 0em;
-		
+
 		width: 1em;
 		z-index: -1;
 	}
@@ -3905,9 +3905,10 @@ input, select, textarea {
 			}
 
 		}
-	
+
  /*page management*/
 	.page_title{
+		padding: 15px;
 		position:static;
 	}
  	.selected_tools{
@@ -3919,3 +3920,62 @@ input, select, textarea {
 		position: relative;
 		left: 100px;
 	}
+
+	/* Create a column layout with Flexbox */
+.row {
+  display: flex;
+}
+
+/* Left column (menu) */
+.left {
+  flex: 10%;
+  padding: 15px 0;
+  padding-left: 20px;
+
+}
+
+.left h2 {
+  padding-left: 120px;
+}
+
+/* Right column (page content) */
+.right {
+  flex: 65%;
+  padding: 15px;
+}
+
+/* Style the search box */
+#mySearch {
+  width: 100%;
+  font-size: 18px;
+  padding: 11px;
+  border: 1px solid #ddd;
+}
+
+/* Style the navigation menu inside the left column */
+#myMenu {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#myMenu li a {
+  padding: 12px;
+  text-decoration: none;
+  color: black;
+  display: block
+}
+
+#myMenu li a:hover {
+  background-color: #eee;
+}
+
+#sidebar {
+    float:left;
+    width:100px;
+}
+#content {
+    margin: 0 0 0 100px;
+}
+
+

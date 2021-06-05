@@ -6,6 +6,9 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="{% static 'assets/css/report.css' %}" />
+          <script type="text/javascript" src={% static 'assets/js/report.js' %}></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   </head>
   <body>
     <!----Header---->
@@ -13,19 +16,64 @@
       <h1>Result</h1>
     </div>
 
-    <!----Side---->
-    <div class="selected_tools">
-      <nav>
-        <ul>
-          {% for tool in tools %}
-          <li><a href="">{{tool}}</a></li>
-          {% endfor %}
-        </ul>
-      </nav>
-    </div>
 
-    <div class="result_info">
-      asdf
-    </div>
+  <div class="row">
+      <div class="w3-container">
+
+          <div style="float: left; padding-left: 50px; text-align: center; margin-right: 10px;">
+                <h2>TOOLS</h2>
+
+            <div style="width:150px; text-align: center;">
+
+                {% for tool in tools %}
+                      <button class="w3-bar-item w3-button w3-hover-pink" onclick="openCity('{{ tool }}')">{{ tool }}</button>
+                {% endfor %}
+            </div>
+          </div>
+
+          <div style="float: left; padding-left: 130px">
+                <div id="result" class="w3-container city">
+                  <h2>total result page</h2>
+                  <p>total result page.</p>
+                </div>
+
+                <div id="XSS" class="w3-container city" style="display:none">
+                  <h2>XSS</h2>
+                  <p>XSS result.</p>
+                </div>
+
+                <div id="Injection" class="w3-container city" style="display:none">
+                  <h2>Injection</h2>
+                  <p>Injection result</p>
+                </div>
+
+                <div id="XXE" class="w3-container city" style="display:none">
+                  <h2>XXE</h2>
+                  <p>XXE Result.</p>
+                </div>
+
+                <div id="Broken Access Control" class="w3-container city" style="display:none">
+                  <h2>Broken Access Control</h2>
+                  <p>Broken Access Control Result.</p>
+                </div>
+
+                <div id="Broken Authentication" class="w3-container city" style="display:none">
+                  <h2>Broken Authentication</h2>
+                  <p>Broken Authentication Result.</p>
+                </div>
+          </div>
+        </div>
+        <script>
+        function openCity(cityName) {
+          var i;
+          var x = document.getElementsByClassName("city");
+          for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+          }
+          document.getElementById(cityName).style.display = "block";
+        }
+        </script>
+      </div>
+
   </body>
 </html>
