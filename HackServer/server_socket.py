@@ -6,8 +6,8 @@ from time import sleep
 from os.path import exists
 from _thread import *
 
-HOST = '192.168.200.146'
-PORT = 62162
+HOST = ''
+PORT = ""
 filename = "/var/log/apache2/access.log"
 
 def getMsg(client_socket : socket) :
@@ -22,7 +22,7 @@ def logReset() :
 
 def XXEResult(client_socket : socket) :
     if not exists(filename) :
-        print("Files does not exist\n")
+        print("FILE ERROR\n")
     else :
         with open(filename, 'rb') as f:
             try:
@@ -34,7 +34,6 @@ def XXEResult(client_socket : socket) :
                 print(e)
         if getMsg(client_socket) :
             sendMsg(client_socket, "end".encode("utf-8"))
-        print("\n [complete] XXE\n -- %d")
 
 def getSessionID(cookies : tuple):
     try:
