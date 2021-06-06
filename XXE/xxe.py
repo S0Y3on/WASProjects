@@ -103,40 +103,6 @@ def genXxeAttack(target_urls : list , mongo):
             insertItem(new_schema, mongo)
 
 
-def getNameList(url : str) -> list :
-    global session
-    name_list = list()
-    res = session.get(url)
-    res_text = res.text
-    soup = BeautifulSoup(res_text,'lxml')
-    
-
-    # 자바스크립트 태그 읽기
-    jas = str(soup).split("\n")
-
-    for jas_line in jas:
-        jas_keyword = '''setAttribute('name',"'''
-        jas_index = jas_line.find('''setAttribute('name',"''')
-        if jas_index != -1 :
-            jas_name = jas_line[jas_index + len(jas_keyword) : jas_line.find('"', jas_index + len(jas_keyword))]
-            name_list.append(jas_name)
-
-
-    # html 태그 읽기
-    html = soup.find_all('input')
-
-    html_keyword = 'name="'
-
-    for html_line in html:
-        html_line = str(html_line)
-        html_index = html_line.find(html_keyword)
-        if html_index != -1:
-            html_name = html_line[html_index + len(html_keyword) : html_line.find(' ', html_index) - 1]
-            name_list.append(html_name)
-
-    return name_list
-
-
 
 # routine : oob xxe exploit을 보냄
 # return value : None
