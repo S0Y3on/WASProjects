@@ -63,7 +63,7 @@ def insertItem(item : schema , mongo):
 # return value : None
 
 # XXE Point
-def xxe(target_urls : list , mongo , attacker_server):
+def XXEPOINT(target_urls : list , mongo , attacker_server):
     genXxeAttack(target_urls , mongo)
 
     sendMsg(client_socket, "reset".encode())
