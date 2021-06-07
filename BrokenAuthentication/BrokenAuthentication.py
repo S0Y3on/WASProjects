@@ -157,8 +157,9 @@ source = socket.gethostbyname(socket.getfqdn())
 #logined_ip =   
 
                                             
-#ui에 표출할 특정 값 골라내기
+#ui에 표출할 특정 값 골라내기 + vulname 추가
 data = {
+    'vulname' : 'BrokenAuthentication',
     'access_time' : access_time,
     'name' : cookie_dict['name'],
     'value' : cookie_dict['value'],
