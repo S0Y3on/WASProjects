@@ -6,6 +6,7 @@ import re
 from pymongo import MongoClient
 from pymongo.cursor import CursorType
 import socket
+immport datetime
 
 class DBHandler:
     def __init__(self):
@@ -138,30 +139,37 @@ def makeCookieDict(data):
         #print(i)
         cookie_dict[i[0]] = i[1]
     return cookie_dict
-cookie_dict = makeCookieDict(str(session.cookies.keys))
+
 #cookie_dict는 전체 설정값
+cookie_dict = makeCookieDict(str(session.cookies.keys))
+if 'maxAge' not in cookie_dict.keys():
+    cookie_dict['maxAge'] = cookie_dict.get('maxAge, )
 
-'''
-print("<"+userID+"'s Session Settings>")
-for key, value in cookie_dict.items():
-    print(' ' + key + " = " + value)
-'''
-
+#access_time
+access_time = datetime.datetime.utcnow()
+print(access_time)
+                                                                                        
+                                            
 #source ip
 source = socket.gethostbyname(socket.getfqdn())
-print(source)
 
+#logined ip
+#logined_ip =   
 
+                                            
 #ui에 표출할 특정 값 골라내기
 data = {
+    'access_time' : access_time,
     'name' : cookie_dict['name'],
     'value' : cookie_dict['value'],
-    'secure' : cookie_dict['secure'],
+    'source_ip' : source,
+#   'logined_ip' :
+    'max-age' : cookie_dict['maxAge'],
     'expires' : cookie_dict['expires'],
+    'secure' : cookie_dict['secure'],
     'discard' : cookie_dict['discard'],
-    'HttpOnly' : cookie_dict['HttpOnly'],
-    'SameSite' : cookie_dict['SameSite'],
-    'source_ip' : source
+    'httponly' : cookie_dict['HttpOnly'],
+    'samesite' : cookie_dict['SameSite'],
 }
 
 print(data)
@@ -170,15 +178,14 @@ f.write(userUrl + '\n' + result + '\n' + str(data))
 f.close()
 
 
-'''
 #mongodb 연결
 my_client = MongoClient("mongodb://localhost:27017/")
 print(my_client)
 
 #insert dict to mongo
 db = my_client['hijackdb']
-collection = db['user']
+collection = db['session']
 
-collection.insert_one(cookie_dict)
-'''
+collection.insert_one(data)
+
 
