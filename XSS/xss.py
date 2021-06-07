@@ -26,10 +26,7 @@ class Schema:
         self.totalHack = 0
         self.hackCode = []
         self.vultype = ''
-        try:
-            self.timestamp = datetime.utcnow()
-        except:
-            print('sdfsdklfjsdklfjskldjfl')
+        self.timestamp = datetime.utcnow()
 
     def addTotalHack(self):
         self.totalHack += 1
@@ -94,10 +91,8 @@ class XssFuzzer:
             print('driver road error')
         # Link 하나 씩 검사
         for link in href_link:
-            print(link)
             Hack = Schema()
             input_resp = self.session.post(self.url + link)
-            print(self.url + link)
             # input 태그 유무검사
             if input_resp.text.find('input') > 0:
                 input_bs = BeautifulSoup(input_resp.text, 'html.parser')
