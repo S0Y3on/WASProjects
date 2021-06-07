@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from bs4 import BeautifulSoup
 import requests
@@ -18,12 +19,17 @@ class Schema:
             self.client = MongoClient(host, int(port))
         except:
             print('DB connect error')
+        self.vulname = 'XSS'
         self.method = ''
         self.url = ''
         self.isHack = False
         self.totalHack = 0
         self.hackCode = []
-        self.type = ''
+        self.vultype = ''
+        try:
+            self.timestamp = datetime.utcnow()
+        except:
+            print('sdfsdklfjsdklfjskldjfl')
 
     def addTotalHack(self):
         self.totalHack += 1
@@ -34,9 +40,9 @@ class Schema:
         self.hackCode.append(hackCode)
         self.isHack = True
         if method == 'GET':
-            self.type = 'Reflected'
+            self.vultype = 'Reflected'
         else:
-            self.type = 'Stored'
+            self.vultype = 'Stored'
 
     def insertDB(self, data, db_name=DB_NAME, collection_name=COLLECTION_NAME):
         result = self.client[db_name][collection_name].insert_one(data).inserted_id
@@ -88,8 +94,10 @@ class XssFuzzer:
             print('driver road error')
         # Link 하나 씩 검사
         for link in href_link:
+            print(link)
             Hack = Schema()
             input_resp = self.session.post(self.url + link)
+            print(self.url + link)
             # input 태그 유무검사
             if input_resp.text.find('input') > 0:
                 input_bs = BeautifulSoup(input_resp.text, 'html.parser')
@@ -138,12 +146,15 @@ class XssFuzzer:
                 #     self.alertCheck(driver, Hack, link, script)
 
             if Hack.totalHack > 0:
-                Hack.insertDB(data={'method': Hack.method,
+                Hack.insertDB(data={'vulname': Hack.vulname,
+                                    'method': Hack.method,
                                     'url': Hack.url,
                                     'isHack': Hack.isHack,
                                     'totalHack': Hack.totalHack,
-                                    'XssType': Hack.type,
-                                    'hackCode': Hack.hackCode})
+                                    'XssType': Hack.vultype,
+                                    'hackCode': Hack.hackCode,
+                                    'timestamp': Hack.timestamp,
+                                    })
         driver.close()
 
     def alertCheck(self, driver, Hack, method, link, script):
