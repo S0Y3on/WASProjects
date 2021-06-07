@@ -10,15 +10,14 @@
     </head>
     <body>
         <div class="URLinput">
-            <label for="URL_box">업로드</label>
-            <input type="file" id="URL_box" required>
-        </div>
-        <div class="next_button">
-            <section>
-                <ul class="actions">
-                    <li><a href="check" class="button">NEXT</a></li>
-                </ul>
-            </section>
+            <form action="{% url 'getURL' %}" method="POST">
+                {% csrf_token %}
+                <div>
+                    URL : 
+                    <input type="text" name="url" />
+                </div>
+                <button type="submit">Next</button>
+            </form>
         </div>
     </body>
 </html>

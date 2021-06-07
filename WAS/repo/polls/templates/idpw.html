@@ -16,12 +16,11 @@
                 Password :
                 <input type="password" name="pw" />
             </div>
+            <input type="hidden" name="url" value="{{ url }}">
               {% for tool in tools %}
                   <input type="hidden" name="tools" value="{{ tool }}">
               {% endfor %}
             <button type="submit">Next</button>
-
         </form>
-
     </body>
 </html>

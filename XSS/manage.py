@@ -1,7 +1,7 @@
-from xss import XssFuzzer
+from XSS import xss
 
 
-def main(url, user):
+def XSSPoint(url, user):
     try:
         run = XssFuzzer(url, user)
 
@@ -21,4 +21,4 @@ if __name__ == '__main__':
         'login': id,
         'password': passwd
     }
-    main(url, user)
+    XSSPoint(url, user)

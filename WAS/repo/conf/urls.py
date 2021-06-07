@@ -28,4 +28,5 @@ urlpatterns = [
     path('home/res', views.res, name='res'),
     path('selectTools', views.selectTools, name='selectTools'),
     path('getIDPW', views.getIDPW, name='getIDPW'),
+    path('getURL', views.getURL, name='getURL'),
 ]

@@ -1,8 +1,8 @@
-from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
-from django.contrib import messages
-from django.http import HttpResponse
-from django.http import Http404, HttpResponseNotFound
+from django.http import Http404
+import sys
+sys.path.insert(0,'/root/WASProjects/')
+from main import startApp
 # Create your views here.
 
 def error(req) :
@@ -23,32 +23,46 @@ def idpw(req) :
 def res(req) :
     return render(req, 'res.html')
 
+def getURL(req) :
+    url = ''
+    if req.method == "POST" :
+        url = req.POST.get("url")
+    return render(req, 'check.html', {'url' : url})
+
 def selectTools(req) :
-    nextpage = "/index/"
-    idpw = False
+    idpw = True
     isEmpty = True
+    user = {
+        "id" : '',
+        "password" : ''
+    }
     if req.method == "POST" :
         tools = req.POST.getlist("tools")
+        url = req.POST.get("url")
         if len(tools) >= 1 :
             isEmpty = False
-        if not isEmpty :
-            if(tools[-1] == "Broken Access Control") :
-                idpw = True
-            elif(tools[-1] == "Broken Authentication") :
-                idpw = True
+        if not isEmpty and (tools[-1] == "XXE" or tools[-1] == "Injection") :
+            idpw = False
     if not isEmpty :
         if idpw :
-            return render(req, 'idpw.html', {'tools' : tools})
+            return render(req, 'idpw.html', {'tools' : tools, 'url' : url})
         else :
+            startApp(url, tools, user)
             return render(req, 'res.html', {'tools' : tools})
     else :
         return render(req, 'check.html')
 
 def getIDPW(req) :
+    user = {
+        "id" : '',
+        "password" : ''
+    }
     if req.method == "POST":
-        id = req.POST.get("id")
-        pw = req.POST.get("pw")
+        user["id"] = req.POST.get("id")
+        user["password"] = req.POST.get("pw")
+        url = req.POST.get("url")
         tools = req.POST.getlist("tools")
-    if id != '' and pw != '':
+    if user["id"] != '' and user["password"] != '':
+        startApp(url, tools, user)
         return render(req, 'res.html', {"tools" : tools})
     return render(req, 'idpw.html')
