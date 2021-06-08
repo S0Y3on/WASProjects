@@ -4,6 +4,9 @@ from pymongo.cursor import CursorType
 from datetime import datetime
 from bs4 import BeautifulSoup
 
+vulname = "AccessControl"
+type = "logincount"
+
 #MongoDB 관련 함수
 class DBHandler:
     def __init__(self):
@@ -57,7 +60,7 @@ options.add_argument("headless")
 
 # login할 admin 페이지 경로
 login_url = 'https://soy3on.pythonanywhere.com/accounts/login/'
-#mongo.insert_item_one({"ThirdTest_TargetPage":login_url},"testdb","adminTest3")
+#mongo.insert_item_one({"logincount_TargetPage":login_url},"testdb","adminTest3")
 
 # 관리자 계정 정보
 login_id = "dream"
@@ -87,23 +90,35 @@ if count <= 0:
 # n번 실패하기
 for i in range(0, count):
     logincheck(login_failpw)
-    date = str(datetime.now())
-    date = date[:date.rfind(':')].replace(' ', ' ')
-    date = date.replace(':', ':')
-    print(date + "  "+"Count : " + str(i + 1))
+    date = datetime.utcnow()
+    print(date)
 
 # 진짜 패스워드 넣기
 logincheck(login_pw)
-date = str(datetime.now())
-date = date[:date.rfind(':')].replace(' ', ' ')
-date = date.replace(':', ':')
+date = datetime.utcnow()
+    #date = date[:date.rfind(':')].replace(' ', ' ')
+    #date = date.replace(':', ':')
 if (browser.current_url != login_url):
-    print(date + "  "+"Success Login")
+    print("Success Login")
+    print(date)
     print("Result = Success(로그인 횟수 제한되지 않음)")
-    limit = "로그인 횟수 제한정책 부재"
-    mongo.insert_item_one({"ThirdTest_TargetPage":login_url,"ThirdTest_Result":limit,"ThirdTest_Count":count,"ThirdTest_Time":date},"testdb","adminTest3")
+    limit = "X"
+    mongo.insert_item_one({"Vulname":vulname,
+                           "Type":type,
+                           "logincount_TargetPage":login_url,
+                           "logincount_Count": count,
+                           "logincount_Policy":limit,
+                           "logincount_Time":date},
+                            "testdb","adminTest3")
 else:
-    print(date + "  " + "Fail Login")
+    print("Fail Login")
+    print(date)
     print("Result = Fail(로그인 횟수 %d회 제한됨)" %(count))
-    limit = "로그인 횟수 제한정책 존재"
-    mongo.insert_item_one({"ThirdTest_TargetPage":login_url,"ThirdTest_Result":limit,"ThirdTest_Count":count,"ThirdTest_Time":date},"testdb","adminTest3")
+    limit = "O"
+    mongo.insert_item_one({"Vulname":vulname,
+                           "Type": type,
+                           "logincount_TargetPage":login_url,
+                           "logincount_Count": count,
+                           "logincount_Policy":limit,
+                           "logincount_Time":date},
+                            "testdb","adminTest3")

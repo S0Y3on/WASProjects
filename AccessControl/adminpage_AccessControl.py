@@ -52,6 +52,8 @@ mongo = DBHandler()
 
 success = fail = 0
 result = ""
+vulname = "AccessControl"
+type = "adminpage"
 
 def requestPart(param):
     URL = "https://soy3on.pythonanywhere.com" + param
@@ -64,21 +66,29 @@ def requestPart(param):
     if response.url == URL:
         print("OK URL: " + URL)
         result = "O"
-        date = str(datetime.now())
-        date = date[:date.rfind(':')].replace(' ', ' ')
-        date = date.replace(':', ':')
-        print(date,"Result : ",result)
+        date = datetime.utcnow()
+        print(date)
+        print("Result : ", result)
         success += 1
-        mongo.insert_item_one({"SecondTest_Target Page":param, "SecondTest_Time":date, "SecondTest_Result":"O"},"testdb","adminTest2")
+        mongo.insert_item_one({"Vulname":vulname,
+                               "Type": type,
+                               "adminpage_Target Page":param,
+                               "adminpage_Time":date,
+                               "adminpage_Result":"O"},
+                                "testdb","adminTest2")
     else:
         print("Fail URL : " + URL)
         result = "X"
-        date = str(datetime.now())
-        date = date[:date.rfind(':')].replace(' ', ' ')
-        date = date.replace(':', ':')
-        print(date,"Result : ",result)
+        date = datetime.utcnow()
+        print(date)
+        print("Result : ",result)
         fail += 1
-        mongo.insert_item_one({"SecondTest_Target Page":param, "SecondTest_Time":date, "SecondTest_Result":"X"},"testdb","adminTest2")
+        mongo.insert_item_one({"Vulname":vulname,
+                               "Type": type,
+                               "adminpage_Target Page":param,
+                               "adminpage_Time":date,
+                               "adminpage_Result":"X"},
+                                "testdb","adminTest2")
 
 #chrome 드라이버 경로
 chrome_driver_path = "E:\WASProjects\chromedriver_win32\chromedriver_win32\chromedriver.exe"
@@ -127,8 +137,13 @@ af.close()
 #dictionary
 with open("AccessPage.txt", "r") as f:
     for line in f.readlines():
-        #mongo.insert_item_one({"Target Page" : line.strip()},"testdb","adminTest2")
         requestPart(line.strip())
 
-mongo.insert_item_one({"SecondTest_Destination Page":login_url,"SecondTest_Success":success,"SecondTest_Fail":fail},"testdb","adminTest2")
+mongo.insert_item_one({"Vulname":vulname,
+                       "Type":type,
+                       "adminpage_Destination Page":login_url,
+                       "adminpage_Success":success,
+                       "adminpage_Fail":fail},
+                        "testdb","adminTest2")
+
 print("Success : " , success, "Fail : " , fail)

@@ -49,6 +49,8 @@ mongo = DBHandler()
 success = 0
 dic_count = 0
 destination_page=""
+vulname = "AccessControl"
+type = "dictpage"
 
 def requestPart(param):
     global destination_page
@@ -59,14 +61,19 @@ def requestPart(param):
     response = requests.get(URL)
     if response.status_code == 200 :
         print("Target page : " + response.url)
-        print("Cookie : ",response.cookies)
+        #print("Cookie : ",response.cookies)
         success +=1
         result = "O"
-        date = str(datetime.now())
-        date = date[:date.rfind(':')].replace(' ', ' ')
-        date = date.replace(':', ':')
-        print(date,"Result : ",result)
-        mongo.insert_item_one({"FirstTest_Target Page":param, "FirstTest_Time":date, "FirstTest_Result":result},"testdb","adminTest1")
+        date = datetime.utcnow()
+        print(date)
+        print("Result : ",result)
+        mongo.insert_item_one({"Vulname":vulname,
+                               "Type":type,
+                               "dictpage_Target Page":param,
+                               "dictpage_param": param,
+                               "dictpage_Time":date,
+                               "dictpage_Result":result},
+                                "testdb","adminTest1")
     time.sleep(0.01)
 
 #dictionary
@@ -78,5 +85,10 @@ with open("dic.txt", "r") as f:
 #random regex (a~z,length=5)
 
 fail = dic_count-success
-mongo.insert_item_one({"FirstTest_Destination Page":destination_page,"FirstTest_Success":success,"FirstTest_Fail":fail},"testdb","adminTest1")
+mongo.insert_item_one({"Vulname":vulname,
+                       "Type":type,
+                       "dictpage_Destination_Page":destination_page,
+                       "dictpage_Success":success,
+                       "dictpage_Fail":fail},
+                        "testdb","adminTest1")
 print("Success : ", success, "Fail : ", fail)
