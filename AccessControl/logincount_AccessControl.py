@@ -10,8 +10,11 @@ type = "logincount"
 #MongoDB 관련 함수
 class DBHandler:
     def __init__(self):
-        host = "localhost"
-        port = "27017"
+        #Local Test
+        #host = "localhost"
+        #port = "27017"
+        host = "127.0.0.1"
+        port = "29666"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -103,22 +106,24 @@ if (browser.current_url != login_url):
     print(date)
     print("Result = Success(로그인 횟수 제한되지 않음)")
     limit = "X"
-    mongo.insert_item_one({"Vulname":vulname,
+    mongo.insert_item_one({"vulname":vulname,
                            "Type":type,
                            "logincount_TargetPage":login_url,
                            "logincount_Count": count,
                            "logincount_Policy":limit,
                            "logincount_Time":date},
-                            "testdb","adminTest3")
+                            "WAS", "test")
+                            #"testdb","adminTest3")
 else:
     print("Fail Login")
     print(date)
     print("Result = Fail(로그인 횟수 %d회 제한됨)" %(count))
     limit = "O"
-    mongo.insert_item_one({"Vulname":vulname,
+    mongo.insert_item_one({"vulname":vulname,
                            "Type": type,
                            "logincount_TargetPage":login_url,
                            "logincount_Count": count,
                            "logincount_Policy":limit,
                            "logincount_Time":date},
-                            "testdb","adminTest3")
+                            "WAS", "test")
+                            #"testdb","adminTest3")
