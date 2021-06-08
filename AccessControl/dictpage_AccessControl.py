@@ -6,8 +6,11 @@ from datetime import datetime
 
 class DBHandler:
     def __init__(self):
-        host = "localhost"
-        port = "27017"
+        #Local Test
+        #host = "localhost"
+        #port = "27017"
+        host = "127.0.0.1"
+        port = "29666"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -67,13 +70,14 @@ def requestPart(param):
         date = datetime.utcnow()
         print(date)
         print("Result : ",result)
-        mongo.insert_item_one({"Vulname":vulname,
+        mongo.insert_item_one({"vulname":vulname,
                                "Type":type,
                                "dictpage_Target Page":param,
                                "dictpage_param": param,
                                "dictpage_Time":date,
                                "dictpage_Result":result},
-                                "testdb","adminTest1")
+                                "WAS","test")
+                                # "testdb","adminTest1")
     time.sleep(0.01)
 
 #dictionary
@@ -85,10 +89,11 @@ with open("dic.txt", "r") as f:
 #random regex (a~z,length=5)
 
 fail = dic_count-success
-mongo.insert_item_one({"Vulname":vulname,
+mongo.insert_item_one({"vulname":vulname,
                        "Type":type,
                        "dictpage_Destination_Page":destination_page,
                        "dictpage_Success":success,
                        "dictpage_Fail":fail},
-                        "testdb","adminTest1")
+                        "WAS","test")
+                        #"testdb","adminTest1")
 print("Success : ", success, "Fail : ", fail)

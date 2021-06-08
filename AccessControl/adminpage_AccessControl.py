@@ -9,8 +9,11 @@ import requests
 #DB관련 함수
 class DBHandler:
     def __init__(self):
-        host = "localhost"
-        port = "27017"
+        #Local Test
+        #host = "localhost"
+        #port = "27017"
+        host = "127.0.0.1"
+        port = "29666"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -70,12 +73,13 @@ def requestPart(param):
         print(date)
         print("Result : ", result)
         success += 1
-        mongo.insert_item_one({"Vulname":vulname,
+        mongo.insert_item_one({"vulname":vulname,
                                "Type": type,
                                "adminpage_Target Page":param,
                                "adminpage_Time":date,
                                "adminpage_Result":"O"},
-                                "testdb","adminTest2")
+                                "WAS", "test")
+                                # "testdb","adminTest3")
     else:
         print("Fail URL : " + URL)
         result = "X"
@@ -83,12 +87,13 @@ def requestPart(param):
         print(date)
         print("Result : ",result)
         fail += 1
-        mongo.insert_item_one({"Vulname":vulname,
+        mongo.insert_item_one({"vulname":vulname,
                                "Type": type,
                                "adminpage_Target Page":param,
                                "adminpage_Time":date,
                                "adminpage_Result":"X"},
-                                "testdb","adminTest2")
+                                "WAS", "test")
+                                # "testdb","adminTest3")
 
 #chrome 드라이버 경로
 chrome_driver_path = "E:\WASProjects\chromedriver_win32\chromedriver_win32\chromedriver.exe"
@@ -139,11 +144,12 @@ with open("AccessPage.txt", "r") as f:
     for line in f.readlines():
         requestPart(line.strip())
 
-mongo.insert_item_one({"Vulname":vulname,
+mongo.insert_item_one({"vulname":vulname,
                        "Type":type,
                        "adminpage_Destination Page":login_url,
                        "adminpage_Success":success,
                        "adminpage_Fail":fail},
-                        "testdb","adminTest2")
+                        "WAS", "test")
+                        # "testdb","adminTest3")
 
 print("Success : " , success, "Fail : " , fail)
