@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import Http404
+from .mongoManager import *
 import sys
 sys.path.insert(0,'/root/WASProjects/')
 from main import startApp
@@ -66,3 +67,21 @@ def getIDPW(req) :
         startApp(url, tools, user)
         return render(req, 'res.html', {"tools" : tools})
     return render(req, 'idpw.html')
+
+def mongoManage(tools, url) :
+    coll = mongoManager(url)
+    data_accessControl = {}
+    data_authentication = {}
+    data_xxs = {}
+    data_xxe = {}
+    data_injection = {}
+    if "broken Access Control" not in tools :
+        pass
+    if "broken Authentication" not in tools :
+        pass
+    if "XSS" not in tools :
+        pass
+    if "XXE" not in tools :
+        pass
+    if "Injection" not in tools :
+        pass

@@ -18,7 +18,17 @@ class mongoManager :
         pass
 
     def caseXXE(self, index) -> dict :
-        pass
+        data = self.coll.find({"type": index})
+        if len(data) < 1 :
+            data = {
+                "type" : None,
+                "detail_type" : None,
+                "url" : None,
+                "isHack" : None,
+                "totUse" : None,
+                "content" : None
+            }
+        return data
 
     def caseAuthentication(self, index) -> dict :
         pass
