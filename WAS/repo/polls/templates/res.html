@@ -5,65 +5,232 @@
   <head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
 		<link rel="stylesheet" href="{% static 'assets/css/report.css' %}" />
-          <script type="text/javascript" src={% static 'assets/js/report.js' %}></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="{% static 'assets/css/chart.min.css' %}">
   </head>
   <body>
     <!----Header---->
     <div class="page_title">
       <h1>Result</h1>
     </div>
-
-
-  <div class="row">
+    <!----Body---->
+    <div class="row">
       <div class="w3-container">
-
-          <div style="float: left; padding-left: 50px; text-align: center; margin-right: 10px;">
-                <h2>TOOLS</h2>
-
+        <!---Show SideBar--->
+        <div style="float: left; padding-left: 50px; text-align: center; margin-right: 10px;">
+            <h2>TOOLS</h2>
             <div style="width:150px; text-align: center;">
-
                 {% for tool in tools %}
                       <button class="w3-bar-item w3-button w3-hover-pink" onclick="openCity('{{ tool }}')">{{ tool }}</button>
                 {% endfor %}
             </div>
-          </div>
-
-          <div style="float: left; padding-left: 130px">
-                <div id="result" class="w3-container city">
-                  <h2>total result page</h2>
-                  <p>total result page.</p>
-                </div>
-
-                <div id="XSS" class="w3-container city" style="display:none">
-                  <h2>XSS</h2>
-                  <p>XSS result.</p>
-                </div>
-
-                <div id="Injection" class="w3-container city" style="display:none">
-                  <h2>Injection</h2>
-                  <p>Injection result</p>
-                </div>
-
-                <div id="XXE" class="w3-container city" style="display:none">
-                  <h2>XXE</h2>
-                  <p>XXE Result.</p>
-                </div>
-
-                <div id="Broken Access Control" class="w3-container city" style="display:none">
-                  <h2>Broken Access Control</h2>
-                  <p>Broken Access Control Result.</p>
-                </div>
-
-                <div id="Broken Authentication" class="w3-container city" style="display:none">
-                  <h2>Broken Authentication</h2>
-                  <p>Broken Authentication Result.</p>
-                </div>
-          </div>
         </div>
-        <script>
+        <!----Show Res---->
+        <div style="float: left; padding-left: 130px">
+              <div id="result" class="w3-container city">
+                <h2>total result page</h2>
+                <p>total result page.</p>
+              </div>
+
+              <div id="XSS" class="w3-container city" style="display:none">
+                <!-- Pie Chart -->
+                  <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">URL : http://127.0.0.1:8080/post/new/</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-pie pt-4 pb-2">
+                                <canvas id="xss_chart"></canvas>
+                            </div>
+                            <div class="mt-4 text-center small">
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-success"></i> Attack Failed
+                                </span>
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-danger"></i> Attack Succeed
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Card Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Your Dangers</h6>
+                    </div>
+                    <div class="card-body">
+                    <!--card Info-->
+                        <h4 class="small font-weight-bold">Stored XSS <span
+                                class="float-right">99%</span></h4>
+                        <div class="progress mb-4">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: 99%"
+                                aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <h4 class="small font-weight-bold">Reflected  XSS <span
+                                class="float-right">80%</span></h4>
+                        <div class="progress mb-4">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 80%"
+                                aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">XSS Fuzzing Test Result </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>method</th>
+                                        <th>URL</th>
+                                        <th>Total Attack</th>
+                                        <th>Succeed Attack</th>
+                                        <th>Attack Code</th>
+                                    </tr>
+                                </thead>
+                                <!--ChartInfo-->
+                                <tbody>
+                                    <tr>
+                                        <td>POST</td>
+                                        <td>"http://127.0.0.1:8080/post/new/"</td>
+                                        <td>9</td>
+                                        <td>4</td>
+                                        <td>
+                                            <a href="./404.html">code</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>GET</td>
+                                        <td>"http://127.0.0.1:8080/post_search"</td>
+                                        <td>9</td>
+                                        <td>5</td>
+                                        <td>
+                                            <a href="./404.html">code</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+              </div>
+
+              <div id="Injection" class="w3-container city" style="display:none">
+                <h2>Injection</h2>
+                <p>Injection result</p>
+              </div>
+
+              <div id="XXE" class="w3-container city" style="display:none">
+                <h2>XXE</h2>
+                <p>XXE Result.</p>
+              </div>
+
+              <div id="Broken Access Control" class="w3-container city" style="display:none">
+                <!----barChart-->
+                <!---전화 필요-->
+                <div class="col-xl-4 col-lg-5">
+                  <div class="card shadow mb-4">
+                      <!-- Card Header - Dropdown -->
+                      <div
+                          class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                          <h6 class="m-0 font-weight-bold text-primary">login count</h6>
+                          
+                      </div>
+                      <!-- Card Body -->
+                      <div class="card-body">
+                          <div class="chart-pie pt-4 pb-2">
+                              <canvas id="acc_bar_chart"></canvas>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              </div>
+
+              <div id="Broken Authentication" class="w3-container city" style="display:none">
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">XSS Fuzzing Test Result </h6>
+                  </div>
+                  <div class="card-body">
+                      <div class="table-responsive">
+                          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                              <thead>
+                                  <tr>
+                                      <th>Index</th>
+                                      <th>Target Info</th>
+                                  </tr>
+                              </thead>
+                              <!--ChartInfo-->
+                              <tbody>
+                                  <tr>
+                                      <script>
+                                          for(var i = 0; i < 10; i++){
+                                              <td></td>;
+                                              <td></td>;
+                                          }
+                                      </script>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                </div>
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">login count</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-pie pt-4 pb-2">
+                                <canvas id="acc_bar_chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+        </div>
+      </div>
+
+      <!--Script zone-->
+      <script src="{% static 'assets/vendor/chart.js/Chart.min.js' %}"></script>
+      <script>
+        function number_format(number, decimals, dec_point, thousands_sep) {
+          // *     example: number_format(1234.56, 2, ',', ' ');
+          // *     return: '1 234,56'
+                    number = (number + '').replace(',', '').replace(' ', '');
+                    var n = !isFinite(+number) ? 0 : +number,
+                        prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                        sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                        dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                        s = '',
+                        toFixedFix = function(n, prec) {
+                        var k = Math.pow(10, prec);
+                        return '' + Math.round(n * k) / k;
+                        };
+                    // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+                    s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+                    if (s[0].length > 3) {
+                        s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+                    }
+                    if ((s[1] || '').length < prec) {
+                        s[1] = s[1] || '';
+                        s[1] += new Array(prec - s[1].length + 1).join('0');
+                    }
+                    return s.join(dec);
+                }
         function openCity(cityName) {
           var i;
           var x = document.getElementsByClassName("city");
@@ -72,8 +239,196 @@
           }
           document.getElementById(cityName).style.display = "block";
         }
-        </script>
-      </div>
-
+        var xss_chart = new Chart(document.getElementById("xss_chart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Attack Succeed", "Attack Failed"],
+                datasets: [{
+                    data: [30, 30],
+                    backgroundColor: ['#e74a3b', '#1cc88a'],
+                    hoverBackgroundColor: ['#bf3c30', '#17a673'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+                },
+                legend: {
+                display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+        var acc_chart = new Chart(document.getElementById("acc_chart"), {
+          type: 'bar',
+          data: {
+              labels: ["January", "February", "March", "April", "May", "June"],
+              datasets: [{
+              label: "Revenue",
+              backgroundColor: "#4e73df",
+              hoverBackgroundColor: "#2e59d9",
+              borderColor: "#4e73df",
+              data: [4215, 5312, 6251, 7841, 9821, 14984],
+              }],
+          },
+          options: {
+              maintainAspectRatio: false,
+              layout: {
+              padding: {
+                  left: 10,
+                  right: 25,
+                  top: 25,
+                  bottom: 0
+              }
+              },
+              scales: {
+              xAxes: [{
+                  time: {
+                  unit: 'month'
+                  },
+                  gridLines: {
+                  display: false,
+                  drawBorder: false
+                  },
+                  ticks: {
+                  maxTicksLimit: 6
+                  },
+                  maxBarThickness: 25,
+              }],
+              yAxes: [{
+                  ticks: {
+                  min: 0,
+                  max: 15000,
+                  maxTicksLimit: 5,
+                  padding: 10,
+                  // Include a dollar sign in the ticks
+                  callback: function(value, index, values) {
+                      return '$' + number_format(value);
+                  }
+                  },
+                  gridLines: {
+                  color: "rgb(234, 236, 244)",
+                  zeroLineColor: "rgb(234, 236, 244)",
+                  drawBorder: false,
+                  borderDash: [2],
+                  zeroLineBorderDash: [2]
+                  }
+              }],
+              },
+              legend: {
+              display: false
+              },
+              tooltips: {
+              titleMarginBottom: 10,
+              titleFontColor: '#6e707e',
+              titleFontSize: 14,
+              backgroundColor: "rgb(255,255,255)",
+              bodyFontColor: "#858796",
+              borderColor: '#dddfeb',
+              borderWidth: 1,
+              xPadding: 15,
+              yPadding: 15,
+              displayColors: false,
+              caretPadding: 10,
+              callbacks: {
+                  label: function(tooltipItem, chart) {
+                  var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                  return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                  }
+              }
+              },
+          }
+          });
+        var auth_chart = new Chart(document.getElementById("auth_chart"), {
+            type: 'bar',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June"],
+                datasets: [{
+                label: "Revenue",
+                backgroundColor: "#4e73df",
+                hoverBackgroundColor: "#2e59d9",
+                borderColor: "#4e73df",
+                data: [4215, 5312, 6251, 7841, 9821, 14984],
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                padding: {
+                    left: 10,
+                    right: 25,
+                    top: 25,
+                    bottom: 0
+                }
+                },
+                scales: {
+                xAxes: [{
+                    time: {
+                    unit: 'month'
+                    },
+                    gridLines: {
+                    display: false,
+                    drawBorder: false
+                    },
+                    ticks: {
+                    maxTicksLimit: 6
+                    },
+                    maxBarThickness: 25,
+                }],
+                yAxes: [{
+                    ticks: {
+                    min: 0,
+                    max: 15000,
+                    maxTicksLimit: 5,
+                    padding: 10,
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, values) {
+                        return '$' + number_format(value);
+                    }
+                    },
+                    gridLines: {
+                    color: "rgb(234, 236, 244)",
+                    zeroLineColor: "rgb(234, 236, 244)",
+                    drawBorder: false,
+                    borderDash: [2],
+                    zeroLineBorderDash: [2]
+                    }
+                }],
+                },
+                legend: {
+                display: false
+                },
+                tooltips: {
+                titleMarginBottom: 10,
+                titleFontColor: '#6e707e',
+                titleFontSize: 14,
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+                callbacks: {
+                    label: function(tooltipItem, chart) {
+                    var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                    return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                    }
+                }
+                },
+            }
+            });
+      </script>
+    </div>
   </body>
 </html>
