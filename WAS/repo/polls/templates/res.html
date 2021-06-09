@@ -6,9 +6,10 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
-		<link rel="stylesheet" href="{% static 'assets/css/report.css' %}" />
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="{% static 'assets/css/chart.min.css' %}">
+      <link rel="stylesheet" href="{% static 'assets/css/report.css' %}" />
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+      <link rel="stylesheet" href="{% static 'assets/css/chart.min.css' %}">
   </head>
   <body>
     <!----Header---->
@@ -41,7 +42,7 @@
                         <!-- Card Header - Dropdown -->
                         <div
                             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">URL : http://127.0.0.1:8080/post/new/</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">All Attack</h6>
                         </div>
                         <!-- Card Body -->
                         <div class="card-body">
@@ -66,13 +67,13 @@
                     </div>
                     <div class="card-body">
                     <!--card Info-->
-                        <h4 class="small font-weight-bold">Stored XSS <span
+                        <h4 class="small font-weight-bold" style="color: #1b1b1b">Stored XSS <span
                                 class="float-right">99%</span></h4>
                         <div class="progress mb-4">
                             <div class="progress-bar bg-danger" role="progressbar" style="width: 99%"
                                 aria-valuenow="99" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <h4 class="small font-weight-bold">Reflected  XSS <span
+                        <h4 class="small font-weight-bold" style="color: #1b1b1b">Reflected  XSS <span
                                 class="float-right">80%</span></h4>
                         <div class="progress mb-4">
                             <div class="progress-bar bg-warning" role="progressbar" style="width: 80%"
@@ -90,11 +91,11 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>method</th>
-                                        <th>URL</th>
-                                        <th>Total Attack</th>
-                                        <th>Succeed Attack</th>
-                                        <th>Attack Code</th>
+                                        <th style="color: #1b1b1b">method</th>
+                                        <th style="color: #1b1b1b">URL</th>
+                                        <th style="color: #1b1b1b">Total Attack</th>
+                                        <th style="color: #1b1b1b">Succeed Attack</th>
+                                        <th style="color: #1b1b1b">Attack Code</th>
                                     </tr>
                                 </thead>
                                 <!--ChartInfo-->
@@ -244,7 +245,7 @@
             data: {
                 labels: ["Attack Succeed", "Attack Failed"],
                 datasets: [{
-                    data: [30, 30],
+                    data: [Math.round(20/28*100), Math.round(8/28*100)],
                     backgroundColor: ['#e74a3b', '#1cc88a'],
                     hoverBackgroundColor: ['#bf3c30', '#17a673'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
