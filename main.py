@@ -15,7 +15,6 @@ def startApp(url : str, tools : list, user : dict) :
     client = MongoClient(MONGOURL+MONGOPORT)
     db = client['WAS']
     coll = db[url]
-    print(1111)
     for tool in tools :
         if tool == "XSS" :
         #    manage.XSSPoint(url, user)

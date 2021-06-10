@@ -49,7 +49,8 @@ def selectTools(req) :
             return render(req, 'idpw.html', {'tools' : tools, 'url' : url})
         else :
             startApp(url, tools, user)
-            return render(req, 'res.html', {'tools' : tools})
+            data = mongoManage(url)
+            return render(req, 'res.html', {'tools' : tools, 'data' : data})
     else :
         return render(req, 'check.html')
 
@@ -58,30 +59,26 @@ def getIDPW(req) :
         "id" : '',
         "password" : ''
     }
+    url = ''
+    tools = []
+    data = {None}
     if req.method == "POST":
         user["id"] = req.POST.get("id")
         user["password"] = req.POST.get("pw")
         url = req.POST.get("url")
         tools = req.POST.getlist("tools")
+    print(1)
     if user["id"] != '' and user["password"] != '':
         startApp(url, tools, user)
-        return render(req, 'res.html', {"tools" : tools})
+        data = mongoManage(url)
+        
+        return render(req, 'res.html', {"tools" : tools, "data" : data})
     return render(req, 'idpw.html')
 
-def mongoManage(tools, url) :
+def mongoManage(url) :
     coll = mongoManager(url)
-    data_accessControl = {}
-    data_authentication = {}
-    data_xxs = {}
-    data_xxe = {}
-    data_injection = {}
-    if "broken Access Control" not in tools :
-        pass
-    if "broken Authentication" not in tools :
-        pass
-    if "XSS" not in tools :
-        pass
-    if "XXE" not in tools :
-        pass
-    if "Injection" not in tools :
-        pass
+    #data = coll.searchDB()
+    asdf = coll.testSample()
+    print(4)
+    data = {}
+    return data
