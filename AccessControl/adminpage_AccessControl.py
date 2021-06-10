@@ -57,6 +57,7 @@ success = fail = 0
 result = ""
 vulname = "Broken Access Control"
 type = "adminpage"
+info = []
 
 def requestPart(param):
     URL = "https://soy3on.pythonanywhere.com" + param
@@ -73,13 +74,7 @@ def requestPart(param):
         print(date)
         print("Result : ", result)
         success += 1
-        mongo.insert_item_one({"vulname":vulname,
-                               "Type": type,
-                               "adminpage_Target Page":param,
-                               "adminpage_Time":date,
-                               "adminpage_Result":"O"},
-                                "WAS", "test")
-                                # "testdb","adminTest3")
+        info.append(param)
     else:
         print("Fail URL : " + URL)
         result = "X"
@@ -87,13 +82,6 @@ def requestPart(param):
         print(date)
         print("Result : ",result)
         fail += 1
-        mongo.insert_item_one({"vulname":vulname,
-                               "Type": type,
-                               "adminpage_Target Page":param,
-                               "adminpage_Time":date,
-                               "adminpage_Result":"X"},
-                                "WAS", "test")
-                                # "testdb","adminTest3")
 
 #chrome 드라이버 경로
 chrome_driver_path = "E:\WASProjects\chromedriver_win32\chromedriver_win32\chromedriver.exe"
@@ -147,6 +135,7 @@ with open("AccessPage.txt", "r") as f:
 mongo.insert_item_one({"vulname":vulname,
                        "Type":type,
                        "adminpage_Destination Page":login_url,
+                       "adminpage_info":info,
                        "adminpage_Success":success,
                        "adminpage_Fail":fail},
                         "WAS", "test")
