@@ -10,8 +10,8 @@ immport datetime
 
 class DBHandler:
     def __init__(self):
-        host = "localhost"
-        port = "27017"
+        host = "127.0.0.1"
+        port = "29675"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -145,9 +145,9 @@ cookie_dict = makeCookieDict(str(session.cookies.keys))
 if 'maxAge' not in cookie_dict.keys():
     cookie_dict['maxAge'] = cookie_dict.get('maxAge, )
 
+                                            
 #access_time
 access_time = datetime.datetime.utcnow()
-print(access_time)
                                                                                         
                                             
 #source ip
@@ -159,12 +159,12 @@ source = socket.gethostbyname(socket.getfqdn())
                                             
 #ui에 표출할 특정 값 골라내기 + vulname 추가
 data = {
-    'vulname' : 'BrokenAuthentication',
+    'vulname' : 'Broken Authentication',
     'access_time' : access_time,
     'name' : cookie_dict['name'],
     'value' : cookie_dict['value'],
     'source_ip' : source,
-#   'logined_ip' :
+    'logined_ip' :
     'max-age' : cookie_dict['maxAge'],
     'expires' : cookie_dict['expires'],
     'secure' : cookie_dict['secure'],
@@ -180,12 +180,12 @@ f.close()
 
 
 #mongodb 연결
-my_client = MongoClient("mongodb://localhost:27017/")
+my_client = MongoClient("mongodb://127.0.0.1:29675/")
 print(my_client)
 
 #insert dict to mongo
-db = my_client['hijackdb']
-collection = db['session']
+db = my_client['WAS']
+collection = db['test']
 
 collection.insert_one(data)
 
