@@ -10,7 +10,7 @@ class DBHandler:
         #host = "localhost"
         #port = "27017"
         host = "127.0.0.1"
-        port = "29666"
+        port = "29528"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -52,8 +52,9 @@ mongo = DBHandler()
 success = 0
 dic_count = 0
 destination_page=""
-vulname = "AccessControl"
+vulname = "Broken Access Control"
 type = "dictpage"
+info = []
 
 def requestPart(param):
     global destination_page
@@ -70,14 +71,7 @@ def requestPart(param):
         date = datetime.utcnow()
         print(date)
         print("Result : ",result)
-        mongo.insert_item_one({"vulname":vulname,
-                               "Type":type,
-                               "dictpage_Target Page":param,
-                               "dictpage_param": param,
-                               "dictpage_Time":date,
-                               "dictpage_Result":result},
-                                "WAS","test")
-                                # "testdb","adminTest1")
+        info.append(param)
     time.sleep(0.01)
 
 #dictionary
@@ -92,6 +86,7 @@ fail = dic_count-success
 mongo.insert_item_one({"vulname":vulname,
                        "Type":type,
                        "dictpage_Destination_Page":destination_page,
+                       "dictpage_info":info,
                        "dictpage_Success":success,
                        "dictpage_Fail":fail},
                         "WAS","test")

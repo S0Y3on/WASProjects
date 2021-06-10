@@ -4,7 +4,7 @@ from pymongo.cursor import CursorType
 from datetime import datetime
 from bs4 import BeautifulSoup
 
-vulname = "AccessControl"
+vulname = "Broken Access Control"
 type = "logincount"
 
 #MongoDB 관련 함수
@@ -14,7 +14,7 @@ class DBHandler:
         #host = "localhost"
         #port = "27017"
         host = "127.0.0.1"
-        port = "29666"
+        port = "29528"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
