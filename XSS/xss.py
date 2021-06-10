@@ -7,14 +7,14 @@ from selenium import webdriver
 from pymongo import MongoClient
 
 
-DB_NAME = 'test'
-COLLECTION_NAME = 'tlqkf'
+DB_NAME = 'WAS'
+COLLECTION_NAME = 'test'
 
 
 class Schema:
     def __init__(self):
-        host = "localhost"
-        port = "27017"
+        host = "127.0.0.1"
+        port = "29748"
         try:
             self.client = MongoClient(host, int(port))
         except:
