@@ -253,7 +253,7 @@ def fuzzing(keys, url_table, attack_info):
     #lists = keys.tolist() # 프로세스에게 할당된 url
     lists = keys
     cookies = driver.get_cookies()
-    f = open("Payload_test.TXT", 'r')
+    f = open("Payload/Payload_test.TXT", 'r')
     Payloads = f.readlines()
     f.close()
     with requests.Session() as s:
@@ -460,7 +460,7 @@ if __name__ == "__main__":
         Document = {}
         Document['Number'] = n
         Document['Page_URL'] = info[0]
-        Document['Vulname'] = 'Injection'
+        Document['vulname'] = 'Injection'
         if info[1] == 'P':
             Document['Method'] = 'POST'
         else:
