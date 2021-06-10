@@ -9,9 +9,9 @@ client_socket = ""
 session = requests.Session()
 
 class schema :
-    def __init__(self, detail_type : str) :
-        self.type = "xxe"
-        self.detail_type = detail_type
+    def __init__(self, type : str) :
+        self.vulname = "XXE"
+        self.type = type
         self.url = ''
         self.isHack = False
         self.totUse = 0
@@ -44,8 +44,8 @@ def getMsg(client_socket) :
 
 def insertItem(item : schema , mongo):
     data = {
-        "type" : item.type ,
-        "detail_type" : item.detail_type,
+        "vulname" : item.vulname ,
+        "type" : item.type,
         "url" : item.url ,
         "isHack":item.isHack,
         "totUse" : item.totUse,
