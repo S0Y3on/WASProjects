@@ -73,14 +73,6 @@ if __name__ == "__main__" :
     loginpage = userUrl+href #accounts/login 페이지!
 
 
-    #header 정보입력
-    headers = {
-   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
-    Chrome/90.0.4430.85 Safari/537.36',
-   'Referer': loginpage
-    }
-
-
     #login 페이지 login/password 입력칸 찾기
     t= requests.get(loginpage)
     loginsoup = BeautifulSoup(t.text,'html.parser')
@@ -102,6 +94,13 @@ if __name__ == "__main__" :
     payload = {
         reqid : userID,
         reqpw : userPW
+    }
+    
+    #header 정보입력
+    headers = {
+   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
+    Chrome/90.0.4430.85 Safari/537.36',
+   'Referer': loginpage
     }
 
 
