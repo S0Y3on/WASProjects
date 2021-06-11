@@ -60,8 +60,6 @@ if __name__ == "__main__" :
     #url입력
     userUrl = (input("url : "))
 
-    #Attacker's login
-    ####################################################
     #타겟페이지 접속
     access = requests.get(userUrl)
 
