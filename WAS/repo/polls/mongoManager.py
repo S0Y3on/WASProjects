@@ -126,8 +126,33 @@ class mongoManager :
                 "Payload" : None
             }
         return datas
-    def craft(self, datas) -> dict : 
-        pass
+    def craftInjection(self, datas) -> dict : 
+        injection_charts = {
+            urls : [],
+            parameters : [],
+            suspicious_parameters : []
+        }
+        injection_tables = []
+        table = {
+            'Method' : None,
+            'Page_URL' : None,
+            'Parameters' : None,
+            'Suspicious_Parameters' : None,
+            'Payload' : None 
+        }
+        for data in datas : 
+            if data["Vulname"] != None :
+                table["Method"] = data["Method"]
+                table["Page_URL"] = data["Page_URL"]
+                table["Parameters"] = data["Parameters"]
+                table["Suspicious_Parameters"] = data["Suspicious_Parameters"]
+                table["Payload"] = data["Payload"]
+                injection_charts["urls"].append(table["Page_URL"])
+                injection_charts["parameters"].append(table["Parameters"])
+                injection_charts["suspicious_Parameters"].append(table["Suspicious_Parameters"])
+        if len(injection_tables) < 1 :
+            injection_tables.append(table)
+        return {"injection_charts" : injection_charts, "injection_tables" : injection_tables}
     def caseXSS(self) -> dict :
         datas = self.coll.find({"vulname": "XSS"})
         if datas.count() < 1 :
@@ -178,8 +203,8 @@ class mongoManager :
         datas = self.coll.find({"vulname": "XXE"})
         if datas.count() < 1 :
             datas = {
+                "vulname" : None,
                 "type" : None,
-                "detail_type" : None,
                 "url" : None,
                 "isHack" : None,
                 "totUse" : None,
@@ -187,7 +212,51 @@ class mongoManager :
             }
         return datas
     def craftXXE(self, datas) -> dict : 
-        pass
+        gen_chart = {
+            'success' : 0,
+            'fail' : 0
+        }
+        oob_chart = {
+            'success' : 0,
+            'fail' : 0
+        }
+        gen_tables = []
+        oob_tables = []
+        gen_table = {
+            'url' : None,
+            'totUse' : None,
+            'content' : None 
+        }
+        oob_table = {
+            'url' : None,
+            'totUse' : None,
+            'content' : None 
+        }
+        for data in datas :
+            if data["vulname"] != None :
+                if data["type"] == "GEN" :
+                    if data["isHack"] :
+                        gen_chart["success"] += 1
+                    else :
+                        gen_chart["fail"] += 1
+                    gen_table["url"] = data["url"]
+                    gen_table["totUse"] = data["totUse"]
+                    gen_table["content"] = data["content"]
+                    gen_tables.append(gen_table)
+                else :
+                    if data["isHack"] :
+                        oob_chart["success"] += 1
+                    else :
+                        oob_chart["fail"] += 1
+                    oob_table["url"] = data["url"]
+                    oob_table["totUse"] = data["totUse"]
+                    oob_table["content"] = data["content"]
+                    oob_tables.append(oob_table)
+        if len(gen_tables) < 1 :
+            gen_tables.append(gen_table)
+        if len(oob_tables) < 1 :
+            oob_tables.append(oob_table)
+        return {"gen_chart" : gen_chart, "oob_chart" : oob_chart, "gen_tables" : gen_tables, "oob_tables" : oob_tables}
     def caseAuthentication(self) -> dict :
         data = self.coll.find({"vulname": "Broken Authentication"})
         if len(data) < 1 :
