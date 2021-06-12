@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from AccessControl import *
-from Injection import *
+from Injection import Injection
 from XSS import manage
 from XXE import xxe
 import socket
@@ -30,6 +30,7 @@ def startApp(url : str, tools : list, user : dict) :
         #    manage.XSSPoint(url, user)
             pass
         elif tool == "Injection":
+            #Injection.Injection(url)
             pass
         elif tool == "XXE" :
         #   xxe.XXEPOINT(url, coll, atk)
