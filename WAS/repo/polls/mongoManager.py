@@ -98,7 +98,7 @@ class mongoManager :
                     dict_shape["dictpage_Fail"] = data["dictpage_Fail"]
                     dict_table.append(dict_shape)
                 elif data["Type"] == "logincount" :
-                    login_shape["logincount_TargetPage"] = data["logincount_TargetPage"]
+                    login_shape["logincount_TargetPage"] = data["logincount_TargetPage"][8 + data["logincount_TargetPage"][8:].find('/'):]
                     login_shape["logincount_Count"] = data["logincount_Count"]
                     login_shape["logincount_Policy"] = data["logincount_Policy"]
                     login_shape["logincount_Time"] = data["logincount_Time"]

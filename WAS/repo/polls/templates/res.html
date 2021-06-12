@@ -593,10 +593,6 @@
                             min: 0,
                             max: 5,
                             stepSize: 1,
-                            // Include a dollar sign in the ticks
-                            {#callback: function(value, index, values) {#}
-                            {#    return '$' + number_format(value);#}
-                            //}
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
@@ -624,12 +620,6 @@
                     intersect: false,
                     mode: 'index',
                     caretPadding: 10,
-                    {#callbacks: {#}
-                    {#    label: function(tooltipItem, chart) {#}
-                    {#        var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';#}
-                    {#        return datasetLabel + ': $' + number_format(tooltipItem.yLabel);#}
-                    {#    }#}
-                    //}
                 }
             }
         });
@@ -694,17 +684,13 @@
             }
         });
 
-        {#var urls = {{ AccessControl.target_urls }}#}
+        var urls = {{ AccessControl.target_urls|safe }}
         var counts = {{ AccessControl.login_counts }}
-
-        // 뒷 부분만 잘라야 할 것 같은데 어떻게 수정해야할지 고민입니다......................
-        // 너무 길어서 표에 이상하게 나타나네요....
-{#['https://soy3on.pythonanywhere.com/accounts/login/', 'https://soy3on.pythonanywhere.com/accounts/login/']#}
 
         var acc_chart = new Chart(document.getElementById("acc_chart"), {
             type: 'bar',
             data: {
-                labels: ['/accounts/ login/','/accounts/login/'],
+                labels: urls,
                 datasets: [{
                     label: "Revenue",
                     backgroundColor: "#4e73df",

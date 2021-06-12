@@ -1,3 +1,5 @@
+import requests
+from bs4 import BeautifulSoup
 from pymongo import MongoClient
 from AccessControl import *
 from Injection import Injection
@@ -18,6 +20,30 @@ def conATK() :
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((ATTACKSERVER, ATTACKPORT))
     return client_socket
+
+
+# parser
+def findHref(url):
+    # 검사하는 url에서 이동할 수 있는 href 찾기
+    href_link = []
+
+    res = requests.get(url)
+    bs = BeautifulSoup(res.text, 'html.parser')
+
+    for link in bs.findAll('a'):
+        # 이동할 수 있는 url이 있는 경우
+        if 'href' in link.attrs:
+            href_link.append(link.attrs['href'])
+        else:
+            print("No Hyperlink Link")
+
+    for link in bs.findAll('form'):
+        if 'action' in link.attrs:
+            href_link.append(link.attrs['action'])
+        else:
+            print("No form tag")
+    return href_link
+
 
 def startApp(url : str, tools : list, user : dict) :
     client = MongoClient(MONGOURL+MONGOPORT)
