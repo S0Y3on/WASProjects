@@ -10,10 +10,10 @@ import requests
 class DBHandler:
     def __init__(self):
         #Local Test
-        host = "localhost"
-        port = "27017"
-        #host = "127.0.0.1"
-        #port = "29528"
+        #host = "localhost"
+        #port = "27017"
+        host = "127.0.0.1"
+        port = "29528"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -65,7 +65,6 @@ def requestPart(param):
     global fail
     global result
     header = ""
-    #response = requests.post(URL,headers=header)
     response = requests.get(URL)
     if response.url == URL:
         print("OK URL: " + URL)
@@ -82,9 +81,6 @@ def requestPart(param):
         print(date)
         print("Result : ",result)
         fail += 1
-
-#chrome 드라이버 경로
-chrome_driver_path = "E:\WASProjects\chromedriver_win32\chromedriver_win32\chromedriver.exe"
 
 # 옵션 생성
 options = webdriver.ChromeOptions()
@@ -125,18 +121,6 @@ def adminpage_login(url, user) :
     with open("AccessPage.txt", "r") as f:
         for line in f.readlines():
             requestPart(line.strip())
-
-
-
-#login할 admin 페이지 경로
-#login_url = (input("login_url : "))
-#login_url = 'https://soy3on.pythonanywhere.com/admin/login/?next=/admin/'
-
-#관리자 계정 정보
-#login_id = (input("login_id : "))
-#login_pw = (input("login_pw : "))
-#login_id = "dream"
-#login_pw = "nana0813"
 
 url, id, passwd = input('사용자 입력 값 : ').split()
 user = {
