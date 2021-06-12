@@ -139,3 +139,7 @@ mongo.insert_item_one({"vulname":vulname,
                         # "testdb","adminTest3")
 
 print("Success : " , success, "Fail : " , fail)
+
+def adminPoint(coll : MongoClient, urls : list, user : dict, chromedriverPATH : str) :
+    #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
+    pass

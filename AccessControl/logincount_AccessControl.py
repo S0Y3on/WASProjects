@@ -118,3 +118,6 @@ else:
                             "WAS", "test")
                             #"testdb","adminTest3")
 
+def cntPoint(coll : MongoClient, urls : list, user : dict, chromedriverPATH : str) :
+    #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
+    pass
