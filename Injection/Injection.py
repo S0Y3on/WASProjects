@@ -11,7 +11,7 @@ import parmap
 import numpy as np
 from pymongo import MongoClient
 # 로그인이 필요한 경우 로그인 페이지 주소와 계정정보 받아서 세션 아이디 획득
-def get_sessionID(url, id, pw, l):
+def get_sessionID():
     options = webdriver.ChromeOptions()
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_argument("headless")
@@ -20,21 +20,12 @@ def get_sessionID(url, id, pw, l):
     options.add_argument("disable-infobars")
     options.add_argument("--disable-extensions")
     driver = Chrome('chromedriver.exe', chrome_options=options)
-    if l == True:
-        driver.get(url)
-        elem = driver.find_element_by_name('username')
-        elem.send_keys(id)
-        elem = driver.find_element_by_name('password')
-        elem.send_keys(pw)
-        elem.send_keys(Keys.RETURN)
-        return driver
     return driver
 
 # url_table에 저장된 url에 접속하여 파라미터 수집
 def get_param(keys, url_table):
-    # todo: 메인 페이지에서 넘어올 url_table은 리스트 형식으로, 맞춰서 함수 수정할 것
     # 멀티프로세싱 적용시 각 프로세스마다 driver를 새로 만들어야 하는 문제 -> 세션관리 문제
-    driver = get_sessionID('http://localhost:8080/WebGoat/login.mvc', 'guest', 'guest', False)
+    driver = get_sessionID()
     lists = keys
     domain_parse = re.compile('^https?:\/\/[^\/]+/')
     for url in lists:
@@ -249,11 +240,11 @@ def linked_page(url, table, driver):
 # 파라미터 정보까지 수집한 url_table을 사용해서 워드리스트에 있는 공격코드를 각 파라미터에 대입
 # 각 공격에 대한 요청 길이를 표준화하여 z_score가 +- 3보다 큰 경우 이상반응(성공)으로 간주함
 def fuzzing(keys, url_table, attack_info):
-    driver = get_sessionID('http://localhost:8080/WebGoat/login.mvc', 'guest', 'guest', False)
+    driver = get_sessionID()
     #lists = keys.tolist() # 프로세스에게 할당된 url
     lists = keys
     cookies = driver.get_cookies()
-    f = open("Payload/Payload_test.TXT", 'r')
+    f = open("Payload/Payload.TXT", 'r')
     Payloads = f.readlines()
     f.close()
     with requests.Session() as s:
@@ -394,35 +385,18 @@ def fuzzing(keys, url_table, attack_info):
             attack_info.append(info)
         return attack_info
 
-if __name__ == "__main__":
-    # ex)     # python test_2.py -url http://localhost:8080/WebGoat/start.mvc -l -id guest -pw guest \
-    # -login http://localhost:8080/WebGoat/j_spring_security_check
+def Injection(url):
     url_table = {}
+    url = url
 
-    parser = argparse.ArgumentParser(description='사용법')
-
-    # 입력받을 인자값 등록
-    parser.add_argument('-url', required=True, help='대상 url')
-    parser.add_argument('-l', action='store_true', help='로그인 필요 여부')
-    parser.add_argument('-id', required=False, help='로그인 필요시 id')
-    parser.add_argument('-pw', required=False, help='로그인 필요시 pw')
-    parser.add_argument('-login', required=False, help='로그인 요청 url')
-
-    # 입력받은 인자값을 args에 저장 (type: namespace)
-    args = parser.parse_args()
-    global login, id, pw, l
-    url = args.url
-    login = args.login
-    id = args.id
-    pw = args.pw
-    l = args.l
     # 만약 링크가 https://naver.com 으로 주어진다면 https://naver.com/으로 변경
     if str(url)[-1] != '/':
         if str(url).count('/') == 2:
             url = str(url) + '/'
 
     # 웹드라이버 세션 아이디 획득
-    driver = get_sessionID(login, id, pw, l)
+    # todo: 세션획득 들어내기
+    driver = get_sessionID()
     # 연결된 페이지 URL 수집 및 파라미터 정보 수집
     url_table = linked_page(url, url_table, driver)
     for i in url_table.keys():
