@@ -102,7 +102,7 @@ class mongoManager :
                     login_shape["logincount_Count"] = data["logincount_Count"]
                     login_shape["logincount_Policy"] = data["logincount_Policy"]
                     login_shape["logincount_Time"] = data["logincount_Time"]
-                    target_urls.append(data["logincount_TargetPage"])
+                    target_urls.append(login_shape["logincount_TargetPage"])
                     login_counts.append(int(data["logincount_Count"]))
                     login_chart.append(login_shape)
                 elif data["Type"] == "adminpage" :
