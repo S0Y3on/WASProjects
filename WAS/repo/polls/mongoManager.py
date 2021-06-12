@@ -4,7 +4,7 @@ from sshtunnel import SSHTunnelForwarder
 MONGOURL = "ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com:"
 
 # 이 부분이 compass 포트 번호 넣는 부분입니다!
-MONGOPORT = 29512
+MONGOPORT = 29500
 
 # VM IP/DNS - Will depend on your VM
 EC2_URL = '''ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com'''
@@ -66,28 +66,30 @@ class mongoManager :
             }
         return datas
     def craftAccessControl(self, datas) -> dict :
-        admin_shape = {
-            "adminpage_Destination" : None,
-            "adminpage_Info" : None,
-            "adminpage_Success" : 0,
-            "adminpage_Fail" : 0
-        }
-        login_shape = {
-            "logincount_TargetPage" : None,
-            "logincount_Count" : None,
-            "logincount_Policy" : 0,
-            "logincount_Time" : 0
-        }
-        dict_shape = {
-            "dictpage_Destination" : None,
-            "dictpage_Info" : None,
-            "dictpage_Success" : 0,
-            "dictpage_Fail" : 0
-        }
         dict_table = []
         admin_table = []
         login_chart = []
+        target_urls = []
+        login_counts = []
         for data in datas :
+            admin_shape = {
+                "adminpage_Destination": None,
+                "adminpage_Info": None,
+                "adminpage_Success": 0,
+                "adminpage_Fail": 0
+            }
+            login_shape = {
+                "logincount_TargetPage": None,
+                "logincount_Count": None,
+                "logincount_Policy": 0,
+                "logincount_Time": 0
+            }
+            dict_shape = {
+                "dictpage_Destination": None,
+                "dictpage_Info": None,
+                "dictpage_Success": 0,
+                "dictpage_Fail": 0
+            }
             if data["Type"] != None :
                 if data["Type"] == "dictpage" :
                     dict_shape["dictpage_Destination_Page"] = data["dictpage_Destination_Page"]
@@ -100,9 +102,11 @@ class mongoManager :
                     login_shape["logincount_Count"] = data["logincount_Count"]
                     login_shape["logincount_Policy"] = data["logincount_Policy"]
                     login_shape["logincount_Time"] = data["logincount_Time"]
+                    target_urls.append(data["logincount_TargetPage"])
+                    login_counts.append(int(data["logincount_Count"]))
                     login_chart.append(login_shape)
                 elif data["Type"] == "adminpage" :
-                    admin_shape["adminpage_Destination Page"] = data["adminpage_Destination Page"]
+                    admin_shape["adminpage_Destination_Page"] = data["adminpage_Destination Page"]
                     admin_shape["adminpage_Info"] = data["adminpage_Info"]
                     admin_shape["adminpage_Success"] = data["adminpage_Success"]
                     admin_shape["adminpage_Fail"] = data["adminpage_Fail"]
@@ -113,7 +117,7 @@ class mongoManager :
             login_chart.append(login_shape)
         if len(admin_table) < 1 : 
             admin_table.append(admin_shape)
-        return {"dict_table" : dict_table, "admin_table" : admin_table, "login_chart" : login_chart}
+        return {"dict_table" : dict_table, "admin_table" : admin_table, "login_chart" : login_chart, "target_urls": target_urls, "login_counts":login_counts}
     def caseInjection(self) -> dict :
         datas = self.coll.find({"vulname": "Injection"})
         print(datas)
@@ -132,7 +136,8 @@ class mongoManager :
         injection_charts = {
             "urls" : [],
             "parameters" : [],
-            "suspicious_parameters" : []
+            "suspicious_parameters" : [],
+            "number":[],
         }
         injection_tables = []
         table = {
@@ -152,6 +157,7 @@ class mongoManager :
                 injection_charts["urls"].append(table["Page_URL"])
                 injection_charts["parameters"].append(table["Parameters"])
                 injection_charts["suspicious_parameters"].append(table["Suspicious Parameters"])
+                injection_charts["number"].append(data['Number'])
         if len(injection_tables) < 1 :
             injection_tables.append(table)
         return {"injection_charts" : injection_charts, "injection_tables" : injection_tables}
@@ -236,17 +242,18 @@ class mongoManager :
         }
         gen_tables = []
         oob_tables = []
-        gen_table = {
-            'url': None,
-            'totUse': None,
-            'content': None
-        }
-        oob_table = {
-            'url': None,
-            'totUse': None,
-            'content': None
-        }
+
         for data in datas:
+            gen_table = {
+                'url': None,
+                'totUse': None,
+                'content': None
+            }
+            oob_table = {
+                'url': None,
+                'totUse': None,
+                'content': None
+            }
             if data["vulname"] != None:
                 if data["type"] == "GEN":
                     if data["isHack"]:
@@ -294,14 +301,17 @@ class mongoManager :
     def craftAuthentication(self, datas) -> dict :
         data = datas[0]
         table = {
-            "Session ID" : data["value"],
-            "Source IP" : data["source_ip"],
-            "Logined IP" : data["logined_ip"],
+            "SessionID" : data["value"],
+            "SourceIP" : data["source_ip"],
+            "LoginedIP" : data["logined_ip"],
             "Secure" : data["secure"],
             "Discard" : data["discard"],
-            "HTTP Only" : data["httponly"],
+            "HTTPOnly" : data["httponly"],
             "samesite" : data["samesite"]
         }
+
+        data["max-age"] = 0 if data["max-age"] is None else data["max-age"]
+
         chart = {
             "Standard" : 600,
             "Target" : data["max-age"],

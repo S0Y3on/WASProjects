@@ -37,6 +37,10 @@
 
               <div id="XSS" class="w3-container city" style="display:none">
                 <!-- Pie Chart -->
+              <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">XSS Result </h6>
+                  </div><br>
                   <div class="col-xl-4 col-lg-5">
                     <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
@@ -68,7 +72,7 @@
                     <div class="card-body">
                     <!--card Info-->
                         {% for table in XSS.tableRes %}
-                            <h4 class="small font-weight-bold" style="color: #1b1b1b">{{ table.XssType }} XSS <span
+                            <h4 class="small font-weight-bold" style="color: #5c6578">{{ table.XssType }} XSS <span
                                     class="float-right">{{ table.SucceedAttackRate }}%</span></h4>
                             <div class="progress mb-4">
                                 <div class="progress-bar bg-warning" role="progressbar" style="width: {{ table.SucceedAttackRate }}%"
@@ -87,11 +91,11 @@
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th style="color: #1b1b1b">method</th>
-                                        <th style="color: #1b1b1b">URL</th>
-                                        <th style="color: #1b1b1b">Total Attack</th>
-                                        <th style="color: #1b1b1b">Succeed Attack</th>
-                                        <th style="color: #1b1b1b">Attack Code</th>
+                                        <th>method</th>
+                                        <th>URL</th>
+                                        <th>Total Attack</th>
+                                        <th>Succeed Attack</th>
+                                        <th>Attack Code</th>
                                     </tr>
                                 </thead>
                                 <!--ChartInfo-->
@@ -118,8 +122,13 @@
                     </div>
                 </div>
               </div>
+              </div>
 
               <div id="Injection" class="w3-container city" style="display:none">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Injection Result </h6>
+                  </div><br>
                 <!-- Pie Chart -->
                 <div class="col-xl-4 col-lg-5">
                     <div class="card shadow mb-4">
@@ -132,7 +141,7 @@
                         <!-- Card Body -->
                         <div class="card-body">
                             <div class="chart-area-demo pt-4 pb-2">
-                                <canvas id="in_chart" width="400" height="200"></canvas>
+                                <canvas id="in_chart" width="400" height="200" style="margin: 0 auto"></canvas>
                             </div>
                             <div class="mt-4 text-center small">
                                 <span class="mr-2">
@@ -148,14 +157,14 @@
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Injection Fuzzing Test Result </h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Injection Result Table</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <td>Number</td>
+                                        <th>Number</th>
                                         <th>method</th>
                                         <th>URL</th>
                                         <th>Parameters</th>
@@ -167,10 +176,10 @@
                                     {% for table in Injection.injection_tables %}
                                         <tr>
                                             <td>1</td>
-                                            <td>POST</td>
-                                            <td>"http://127.0.0.1:8080/post/new/"</td>
-                                            <td>9</td>
-                                            <td>4</td>
+                                            <td>{{ table.Method }}</td>
+                                            <td>{{ table.Page_URL }}</td>
+                                            <td>{{ Injection.injection_charts.parameters }}</td>
+                                            <td>{{ Injection.injection_charts.suspicious_parameters }}</td>
                                             <td>
                                                 <details>
                                                     <summary>SQL_Injection</summary>
@@ -187,43 +196,65 @@
                                             </td>
                                         </tr>
                                     {% endfor %}
-                                    <tr>
-                                        <td>2</td>
-                                        <td>GET</td>
-                                        <td>"http://127.0.0.1:8080/post_search"</td>
-                                        <td>9</td>
-                                        <td>5</td>
-                                        <td>
-                                            <details>
-                                                <summary>SQL_Injection</summary>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or 0=0 #\", 'submit': 'login'}"</p>
-                                                <P>"{'uname': 'USER_INPUT', 'pass': '\"\\' or 1 --\\'\"', 'submit': 'login'}"</P>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or 1=1 or ''='\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"hi' or 'a'='a\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or uname like '%\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or ''='\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"x' or 1=1 or 'x'='y\", 'submit': 'login'}"</p>
-                                            </details>
-                                            <details>
-                                                <summary>Command_Injection</summary>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or 0=0 #\", 'submit': 'login'}"</p>
-                                                <P>"{'uname': 'USER_INPUT', 'pass': '\"\\' or 1 --\\'\"', 'submit': 'login'}"</P>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or 1=1 or ''='\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"hi' or 'a'='a\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or uname like '%\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"' or ''='\", 'submit': 'login'}"</p>
-                                                <p>"{'uname': 'USER_INPUT', 'pass': \"x' or 1=1 or 'x'='y\", 'submit': 'login'}"</p>
-                                            </details>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+                </div>
               </div>
 
               <div id="XXE" class="w3-container city" style="display:none">
+                  <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">XXE Result </h6>
+                  </div><br>
+                      <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">General</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-pie pt-4 pb-2">
+                                <canvas id="xxe_gen_chart"></canvas>
+                            </div>
+                            <div class="mt-4 text-center small">
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-success"></i> Fail
+                                </span>
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-danger"></i> Success
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                      <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div
+                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Out of Bound</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-pie pt-4 pb-2">
+                                <canvas id="xxe_oob_chart"></canvas>
+                            </div>
+                            <div class="mt-4 text-center small">
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-success"></i> Fail
+                                </span>
+                                <span class="mr-2">
+                                    <i class="fas fa-circle text-danger"></i> Success
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">General XXE</h6>
@@ -234,19 +265,17 @@
                                 <thead>
                                     <tr>
                                         <th>URL</th>
-                                        <th>Result</th>
+                                        <th>Content</th>
                                     </tr>
                                 </thead>
                                 <!--ChartInfo-->
                                 <tbody>
+                                    {% for table in XXE.gen_tables %}
                                     <tr>
-                                        <script>
-                                            for(var i = 0; i < 10; i++){
-                                                <td></td>;
-                                                <td></td>;
-                                            }
-                                        </script>
+                                        <td>{{ table.url }}</td>
+                                        <td>{{ table.content }}</td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -262,26 +291,29 @@
                                 <thead>
                                     <tr>
                                         <th>URL</th>
-                                        <th>Result</th>
+                                        <th>Content</th>
                                     </tr>
                                 </thead>
                                 <!--ChartInfo-->
                                 <tbody>
+                                    {% for table in XXE.oob_tables %}
                                     <tr>
-                                        <script>
-                                            for(var i = 0; i < 10; i++){
-                                                <td></td>;
-                                                <td></td>;
-                                            }
-                                        </script>
+                                        <td>{{ table.url }}</td>
+                                        <td>{{ table.content }}</td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
               </div>
-        <div id="Broken Access Control" class="w3-container city" style="display:none">
+              </div>
+              <div id="Broken Access Control" class="w3-container city" style="display:none">
+              <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                      <h6 class="m-0 font-weight-bold text-primary">Broken Access Control</h6>
+                  </div><br>
                 <!----barChart-->
                 <!---전화 필요-->
                 <div class="col-xl-4 col-lg-5">
@@ -294,11 +326,77 @@
                       <!-- Card Body -->
                       <div class="card-body">
                           <div class="chart-pie pt-4 pb-2">
-                              <canvas id="acc_chart"></canvas>
+                              <canvas id="acc_chart" width="400" height="250"></canvas>
                           </div>
                       </div>
                   </div>
+                    <div class="card shadow mb-4">
+                                  <div class="card-header py-3">
+                                      <h6 class="m-0 font-weight-bold text-primary">Destination Page</h6>
+                                  </div><br>
+                            <table class="table table-bordered" id="dataTable" width="100" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Destination</th>
+                                        <th>Success</th>
+                                        <th>Fail</th>
+                                        <th>Info</th>
+                                    </tr>
+                                </thead>
+                                <!--ChartInfo-->
+                                <tbody>
+                                    {% for table in AccessControl.dict_table %}
+                                    <tr>
+                                        <td>{{ table.dictpage_Destination_Page }}</td>
+                                        <td>{{ table.dictpage_Success }}</td>
+                                        <td>{{ table.dictpage_Fail }}</td>
+                                        <td>
+                                            <details>
+                                                <summary>Info</summary>
+                                                {% for code in table.dictpage_Info %}
+                                                    <p>{{ code }}</p>
+                                                {% endfor %}
+                                            </details>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                    <div class="card-header py-3">
+                                      <h6 class="m-0 font-weight-bold text-primary">Admin Destination Page</h6>
+                                  </div><br>
+                    <table class="table table-bordered" id="dataTable" width="100" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Destination</th>
+                                        <th>Success</th>
+                                        <th>Fail</th>
+                                        <th>Info</th>
+                                    </tr>
+                                </thead>
+                                <!--ChartInfo-->
+                                <tbody>
+                                    {% for table in AccessControl.admin_table %}
+                                    <tr>
+                                        <td>{{ table.adminpage_Destination_Page }}</td>
+                                        <td>{{ table.adminpage_Success }}</td>
+                                        <td>{{ table.adminpage_Fail }}</td>
+                                        <td>
+                                            <details>
+                                                <summary>Info</summary>
+                                                {% for code in table.adminpage_Info %}
+                                                    <p>{{ code }}</p>
+                                                {% endfor %}
+                                            </details>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                    </div>
+
                 </div>
+              </div>
               </div>
 
               <div id="Broken Authentication" class="w3-container city" style="display:none">
@@ -312,26 +410,31 @@
                           <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                               <thead>
                                   <tr>
-                                      <th>Index</th>
-                                      <th>Target Info</th>
+                                      <th>Session ID</th>
+                                      <th>Source IP</th>
+                                      <th>Logined IP</th>
+                                      <th>Secure</th>
+                                      <th>Discard</th>
+                                      <th>HTTP Only</th>
+                                      <th>samesite</th>
                                   </tr>
                               </thead>
                               <!--ChartInfo-->
                               <tbody>
-                                  <tr>
-                                      <script>
-                                          for(var i = 0; i < 10; i++){
-                                              <td></td>;
-                                              <td></td>;
-                                          }
-                                      </script>
-                                  </tr>
+                                <tr>
+                                    <td>{{ Authentication.table.SessionID }}</td>
+                                    <td>{{ Authentication.table.SourceIP }}</td>
+                                    <td>{{ Authentication.table.LoginedIP }}</td>
+                                    <td>{{ Authentication.table.Secure }}</td>
+                                    <td>{{ Authentication.table.Discard }}</td>
+                                    <td>{{ Authentication.table.HTTPOnly }}</td>
+                                    <td>{{ Authentication.table.samesite }}</td>
+                                </tr>
                               </tbody>
                           </table>
                       </div>
                   </div>
-                </div>
-                <div class="col-xl-4 col-lg-5">
+                    <div class="col-xl-4 col-lg-5">
                     <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
                         <div
@@ -344,13 +447,15 @@
                                 <canvas id="auth_chart"></canvas>
                             </div>
                         </div>
-                    </div>
+                    </div><br>
+                    <h4 class="m-0 font-weight-bold text-primary">Expires : {{ Authentication.chart.Expires }}</h4>
+                    <br><br>
                 </div>
-                <h4 class="m-0 font-weight-bold text-primary">Expires : 123</h4>
+                </div>
               </div>
               </div>
 
-
+        </div>
         </div>
       </div>
 
@@ -396,7 +501,7 @@
             data: {
                 labels: ["Attack Succeed", "Attack Failed"],
                 datasets: [{
-                    data: [Math.round((totSuccess/total)*100), Math.round(((total-totSuccess)/total)*100)],
+                    data: [totSuccess,(total-totSuccess)],
                     backgroundColor: ['#e74a3b', '#1cc88a'],
                     hoverBackgroundColor: ['#bf3c30', '#17a673'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
@@ -420,26 +525,42 @@
                 cutoutPercentage: 80,
             },
         });
-        var totSuccess = parseInt({{XSS.charTotcnt.tot_success}})
-        var total = parseInt({{XSS.charTotcnt.tot_try}})
+
+        var parameters = {{Injection.injection_charts.parameters}}
+        var x_labels = {{ Injection.injection_charts.number }}
+        var suspicious_parameters = {{Injection.injection_charts.suspicious_parameters}}
         var in_chart = new Chart(document.getElementById("in_chart"), {
             type: 'line',
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                labels: x_labels,
                 datasets: [{
-                    label: "Earnings",
+                    label: "Parameters",
                     lineTension: 0.3,
-                    backgroundColor: "rgba(78, 115, 223, 0.05)",
-                    borderColor: "rgba(78, 115, 223, 1)",
+                    backgroundColor: "rgba(28, 200, 138, 0.05)",
+                    borderColor: "rgba(28, 200, 138, 1)",
                     pointRadius: 3,
-                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointBackgroundColor: "rgba(28, 200, 138, 1)",
+                    pointBorderColor: "rgba(28, 200, 138, 1)",
                     pointHoverRadius: 3,
-                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBackgroundColor: "rgba(28, 200, 138, 1)",
+                    pointHoverBorderColor: "rgba(28, 200, 138, 1)",
                     pointHitRadius: 10,
                     pointBorderWidth: 2,
-                    data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
+                    data: parameters,
+                },{
+                    label: "Suspicious Parameters",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(231, 74, 59, 0.1)",
+                    borderColor: "rgb(231,74,59)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(231, 74, 59, 1)",
+                    pointBorderColor: "rgba(231, 74, 59, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(231, 74, 59, 1)",
+                    pointHoverBorderColor: "rgba(231, 74, 59, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: suspicious_parameters,
                 }],
             },
             options: {
@@ -468,20 +589,21 @@
                     }],
                     yAxes: [{
                         ticks: {
-                            maxTicksLimit: 5,
-                            padding: 10,
-                            stepSize: 10,
+                            beginAtZero: true,
+                            min: 0,
+                            max: 5,
+                            stepSize: 1,
                             // Include a dollar sign in the ticks
-                            callback: function(value, index, values) {
-                                return '$' + number_format(value);
-                            }
+                            {#callback: function(value, index, values) {#}
+                            {#    return '$' + number_format(value);#}
+                            //}
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
                             zeroLineColor: "rgb(234, 236, 244)",
                             drawBorder: false,
-                            borderDash: [2],
-                            zeroLineBorderDash: [2]
+                            borderDash: [1],
+                            zeroLineBorderDash: [1]
                         }
                     }],
                 },
@@ -502,26 +624,29 @@
                     intersect: false,
                     mode: 'index',
                     caretPadding: 10,
-                    callbacks: {
-                        label: function(tooltipItem, chart) {
-                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
-                        }
-                    }
+                    {#callbacks: {#}
+                    {#    label: function(tooltipItem, chart) {#}
+                    {#        var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';#}
+                    {#        return datasetLabel + ': $' + number_format(tooltipItem.yLabel);#}
+                    {#    }#}
+                    //}
                 }
             }
         });
+
+        var Target = {{Authentication.chart.Target}}
+        var Standard = {{ Authentication.chart.Standard }}
         var auth_chart = new Chart(document.getElementById("auth_chart"), {
             type: 'bar',
             data: {
-                labels: ["January", "February", "March", "April", "May", "June"],
+                labels: ["Target", "Standard"],
                 datasets: [{
-                    label: "Revenue",
-                    backgroundColor: "#4e73df",
-                    hoverBackgroundColor: "#2e59d9",
-                    borderColor: "#4e73df",
-                    data: [4215, 5312, 6251, 7841, 9821, 14984],
-                }],
+                    label: "Max age",
+                    backgroundColor: "#E74A3B",
+                    hoverBackgroundColor: "#bd4137",
+                    borderColor: "#ea5a4c",
+                    data: [Target, Standard],
+                },],
             },
             options: {
                 maintainAspectRatio: false,
@@ -550,13 +675,8 @@
                     yAxes: [{
                         ticks: {
                             min: 0,
-                            max: 15000,
-                            maxTicksLimit: 5,
+                            max: 700,
                             padding: 10,
-                            // Include a dollar sign in the ticks
-                            callback: function(value, index, values) {
-                                return '$' + number_format(value);
-                            }
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
@@ -570,37 +690,27 @@
                 legend: {
                     display: false
                 },
-                tooltips: {
-                    titleMarginBottom: 10,
-                    titleFontColor: '#6e707e',
-                    titleFontSize: 14,
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyFontColor: "#858796",
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 15,
-                    yPadding: 15,
-                    displayColors: false,
-                    caretPadding: 10,
-                    callbacks: {
-                        label: function(tooltipItem, chart) {
-                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
-                        }
-                    }
-                },
+
             }
         });
+
+        {#var urls = {{ AccessControl.target_urls }}#}
+        var counts = {{ AccessControl.login_counts }}
+
+        // 뒷 부분만 잘라야 할 것 같은데 어떻게 수정해야할지 고민입니다......................
+        // 너무 길어서 표에 이상하게 나타나네요....
+{#['https://soy3on.pythonanywhere.com/accounts/login/', 'https://soy3on.pythonanywhere.com/accounts/login/']#}
+
         var acc_chart = new Chart(document.getElementById("acc_chart"), {
             type: 'bar',
             data: {
-                labels: ["January", "February", "March", "April", "May", "June"],
+                labels: ['/accounts/ login/','/accounts/login/'],
                 datasets: [{
                     label: "Revenue",
                     backgroundColor: "#4e73df",
                     hoverBackgroundColor: "#2e59d9",
                     borderColor: "#4e73df",
-                    data: [4215, 5312, 6251, 7841, 9821, 14984],
+                    data: counts,
                 }],
             },
             options: {
@@ -630,13 +740,8 @@
                     yAxes: [{
                         ticks: {
                             min: 0,
-                            max: 15000,
-                            maxTicksLimit: 5,
+                            max: 10,
                             padding: 10,
-                            // Include a dollar sign in the ticks
-                            callback: function(value, index, values) {
-                                return '$' + number_format(value);
-                            }
                         },
                         gridLines: {
                             color: "rgb(234, 236, 244)",
@@ -662,15 +767,77 @@
                     yPadding: 15,
                     displayColors: false,
                     caretPadding: 10,
-                    callbacks: {
-                        label: function(tooltipItem, chart) {
-                            var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
-                        }
-                    }
                 },
             }
         });
+
+        var genSuccess = parseInt({{XXE.gen_chart.success}})
+        var genFail = parseInt({{XXE.gen_chart.fail}})
+
+        var xxe_gen_chart = new Chart(document.getElementById("xxe_gen_chart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Succeed", "Failed"],
+                datasets: [{
+                    data: [genSuccess, genFail],
+                    backgroundColor: ['#e74a3b', '#1cc88a'],
+                    hoverBackgroundColor: ['#bf3c30', '#17a673'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+                },
+                legend: {
+                display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+
+        var oobSuccess = parseInt({{XXE.oob_chart.success}})
+        var oobFail = parseInt({{XXE.oob_chart.fail}})
+        var xxe_oob_chart = new Chart(document.getElementById("xxe_oob_chart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Succeed", "Failed"],
+                datasets: [{
+                    data: [oobSuccess, oobFail],
+                    backgroundColor: ['#e74a3b', '#1cc88a'],
+                    hoverBackgroundColor: ['#bf3c30', '#17a673'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+                },
+                legend: {
+                display: false
+                },
+                cutoutPercentage: 80,
+            },
+        });
+
+
+
 
         </script>
     </div>

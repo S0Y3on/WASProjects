@@ -82,7 +82,7 @@ def getIDPW(req) :
         data['Authentication'] = datas['Authentication']
         data['AccessControl'] = datas['AccessControl']
 
-        # print(data['Injection'])
+        # print(data['XXE'])
         return render(req, 'res.html', data)
     return render(req, 'idpw.html')
 
