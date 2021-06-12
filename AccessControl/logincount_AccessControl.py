@@ -11,10 +11,10 @@ type = "logincount"
 class DBHandler:
     def __init__(self):
         #Local Test
-        #host = "localhost"
-        #port = "27017"
-        host = "127.0.0.1"
-        port = "29528"
+        host = "localhost"
+        port = "27017"
+        #host = "127.0.0.1"
+        #port = "29528"
         self.client = MongoClient(host, int(port))
 
     def insert_item_one(self, data, db_name=None, collection_name=None):
@@ -54,61 +54,51 @@ class DBHandler:
         return result
 mongo = DBHandler()
 
-# chrome driver 경로
-chrome_driver_path = "E:\WASProjects\chromedriver_win32\chromedriver_win32\chromedriver.exe"
-
 # 옵션 생성
 options = webdriver.ChromeOptions()
 options.add_argument("headless")
 
-# login할 admin 페이지 경로
-login_url = 'https://soy3on.pythonanywhere.com/accounts/login/'
-#mongo.insert_item_one({"logincount_TargetPage":login_url},"testdb","adminTest3")
+#https://soy3on.pythonanywhere.com/accounts/login/ dream nana0813
 
-# 관리자 계정 정보
-login_id = "dream"
-login_pw = "nana0813"
-login_failpw = "yejiJJANG123"
+browser = webdriver.Chrome('chromedriver.exe', options=options)
+count = 5
 
-browser = webdriver.Chrome(chrome_driver_path, options=options)
-
-def logincheck(pw):
+def logincheck(login_url, user):
     browser.get(login_url)
-
+    global count
     # 로그인 정보 입력할 칸 찾기
     input_id = browser.find_element_by_css_selector("#id_login")
     input_pw = browser.find_element_by_css_selector("#id_password")
 
     # 로그인 정보 값 입력
-    input_id.send_keys(login_id)
-    input_pw.send_keys(pw)
+    input_id.send_keys(user['login'])
+    for i in range(0, count+1):
+        if i < count:
+            input_pw.send_keys("hello")
+        else:
+            input_pw.send_keys(user['password'])
 
     # 로그인 클릭
     browser.find_element_by_css_selector("body > form > button").click()
 
-count = int(input("로그인 횟수 제한 테스트, 몇회 수행하시겠습니까? (5회 이상 권장) "))
-if count <= 0:
-    count=int(input("[Error] 다시 입력하세요. "))
+#url, 관리자계정 값 받기
+url, id, passwd = input('사용자 입력 값 : ').split()
+user = {
+    'login': id,
+    'password': passwd
+}
 
-# n번 실패하기
-for i in range(0, count):
-    logincheck(login_failpw)
-    date = datetime.utcnow()
-    print(date)
-
-# 진짜 패스워드 넣기
-logincheck(login_pw)
+logincheck(url, user)
 date = datetime.utcnow()
-    #date = date[:date.rfind(':')].replace(' ', ' ')
-    #date = date.replace(':', ':')
-if (browser.current_url != login_url):
+
+if (browser.current_url != url):
     print("Success Login")
     print(date)
     print("Result = Success(로그인 횟수 제한되지 않음)")
     limit = "X"
     mongo.insert_item_one({"vulname":vulname,
                            "Type":type,
-                           "logincount_TargetPage":login_url,
+                           "logincount_TargetPage":url,
                            "logincount_Count": count,
                            "logincount_Policy":limit,
                            "logincount_Time":date},
@@ -121,9 +111,13 @@ else:
     limit = "O"
     mongo.insert_item_one({"vulname":vulname,
                            "Type": type,
-                           "logincount_TargetPage":login_url,
+                           "logincount_TargetPage":url,
                            "logincount_Count": count,
                            "logincount_Policy":limit,
                            "logincount_Time":date},
                             "WAS", "test")
                             #"testdb","adminTest3")
+
+def cntPoint(coll : MongoClient, urls : list, user : dict, chromedriverPATH : str) :
+    #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
+    pass

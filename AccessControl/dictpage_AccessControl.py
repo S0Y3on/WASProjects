@@ -92,3 +92,8 @@ mongo.insert_item_one({"vulname":vulname,
                         "WAS","test")
                         #"testdb","adminTest1")
 print("Success : ", success, "Fail : ", fail)
+
+
+def dictPoint(coll : MongoClient, urls : list, user : dict) :
+    #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
+    pass

