@@ -82,15 +82,10 @@ def getIDPW(req) :
         data['Authentication'] = datas['Authentication']
         data['AccessControl'] = datas['AccessControl']
 
-        # print(data['XXE'])
         return render(req, 'res.html', data)
     return render(req, 'idpw.html')
 
 def mongoManage(url) :
     coll = mongoManager(url)
-    data = coll.searchDB()
-    # asdf = coll.testSample()
-    # print(data)
-    print(4)
-    # data = {}
+    data = coll.searchDB() 
     return data

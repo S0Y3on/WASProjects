@@ -327,9 +327,3 @@ class mongoManager :
             "AccessControl": self.craftAccessControl(self.caseAccessControl())
         }
         return data
-
-    def testSample(self) :
-        print(2)
-        self.coll.find_one(filter={'valname':"XXE"}, no_cursor_timeout=False)
-        print(3)
-        return None
