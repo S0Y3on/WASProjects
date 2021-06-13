@@ -377,8 +377,6 @@ def fuzzing(keys, url_table, attack_info):
                     if succeed_flag == True:
                         succeed += 1
                     param_payload[param] = temp
-                    # param_payload = { param : data }
-                    # param_payload = { param : { sql : data_sql , cmd : data_cmd } }
 
             # INFO : ['http://localhost:8080/WebGoat/start.mvc#attack/101829144/1100', 'P', 2, 1, {'station': ["{'station': '1010 or 1=1', 'SUBMIT': 'Go!'}", "{'station': '101or 0=0 --', 'SUBMIT': 'Go!'}", "{'station': '101or 1=1--', 'SUBMIT': 'Go!'}"]}]
             info = [url, method, len(data.keys()), succeed, param_payload]
@@ -395,7 +393,6 @@ def Injection(url):
             url = str(url) + '/'
 
     # 웹드라이버 세션 아이디 획득
-    # todo: 세션획득 들어내기
     driver = get_sessionID()
     # 연결된 페이지 URL 수집 및 파라미터 정보 수집
     url_table = linked_page(url, url_table, driver)
@@ -441,7 +438,12 @@ def Injection(url):
             Document['Method'] = 'GET'
         Document['Parameters'] = info[2]
         Document['Suspicious Parameters'] = info[3]
-        Document['Payload'] = info[4]
+        # payload = { p1 : { sql : p_load, cmd : p_load}, p2 : { sql : p_load, cmd : p_load } }
+        payload = {'SQL_Injection' : [], 'Command_Injection' : []}
+        for p_load in info[4].values():
+            payload['SQL_Injection'] = payload['SQL_Injection'] + p_load['SQL_Injection']
+            payload['Command_Injection'] = payload['Command_Injection'] + p_load['Command_Injection']
+        Document['Payload'] = payload
         collection.insert_one(Document)
         n +=1
     # 파라미터 15, 페이로드 127 약 250초, 인터넷 속도 30~40
