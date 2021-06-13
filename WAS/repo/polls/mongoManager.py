@@ -4,7 +4,7 @@ from sshtunnel import SSHTunnelForwarder
 MONGOURL = "ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com:"
 
 # 이 부분이 compass 포트 번호 넣는 부분입니다!
-MONGOPORT = 29500
+MONGOPORT = 29238
 
 # VM IP/DNS - Will depend on your VM
 EC2_URL = '''ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com'''
@@ -134,32 +134,36 @@ class mongoManager :
 
     def craftInjection(self, datas) -> dict :
         injection_charts = {
-            "urls" : [],
-            "parameters" : [],
-            "suspicious_parameters" : [],
-            "number":[],
+            "urls": [],
+            "parameters": [],
+            "suspicious_parameters": [],
+            "number": [],
         }
         injection_tables = []
-        table = {
-            'Method' : None,
-            'Page_URL' : None,
-            'Parameters' : None,
-            'Suspicious_Parameters' : None,
-            'Payload' : None
-        }
+
         for data in datas :
+            table = {
+                'Method': None,
+                'Page_URL': None,
+                'Parameters': None,
+                'Suspicious_Parameters': None,
+                'Payload': None
+            }
             if data["vulname"] != None :
                 table["Method"] = data["Method"]
                 table["Page_URL"] = data["Page_URL"]
                 table["Parameters"] = data["Parameters"]
-                table["Suspicious Parameters"] = data["Suspicious Parameters"]
+                table["Suspicious_Parameters"] = data["Suspicious Parameters"]
                 table["Payload"] = data["Payload"]
+                table["Number"] = data["Number"]
+                injection_tables.append(table)
+
                 injection_charts["urls"].append(table["Page_URL"])
                 injection_charts["parameters"].append(table["Parameters"])
-                injection_charts["suspicious_parameters"].append(table["Suspicious Parameters"])
+                injection_charts["suspicious_parameters"].append(table["Suspicious_Parameters"])
                 injection_charts["number"].append(data['Number'])
-        if len(injection_tables) < 1 :
-            injection_tables.append(table)
+        # if len(injection_tables) < 1 :
+        #     injection_tables.append(table)
         return {"injection_charts" : injection_charts, "injection_tables" : injection_tables}
 
     def caseXSS(self) -> dict :

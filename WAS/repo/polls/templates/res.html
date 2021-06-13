@@ -175,21 +175,21 @@
                                 <tbody>
                                     {% for table in Injection.injection_tables %}
                                         <tr>
-                                            <td>1</td>
+                                            <td>{{ table.Number }}</td>
                                             <td>{{ table.Method }}</td>
                                             <td>{{ table.Page_URL }}</td>
-                                            <td>{{ Injection.injection_charts.parameters }}</td>
-                                            <td>{{ Injection.injection_charts.suspicious_parameters }}</td>
+                                            <td>{{ table.Parameters }}</td>
+                                            <td>{{ table.Suspicious_Parameters }}</td>
                                             <td>
                                                 <details>
                                                     <summary>SQL_Injection</summary>
-                                                    {% for code in table.Payload.uname.SQL_Injection %}
+                                                    {% for code in table.Payload.SQL_Injection %}
                                                         <p>{{ code }}</p>
                                                     {% endfor %}
                                                 </details>
                                                 <details>
                                                     <summary>Command_Injection</summary>
-                                                    {% for code in table.Payload.uname.Command_Injection %}
+                                                    {% for code in table.Payload.Command_Injection %}
                                                         <p>{{ code }}</p>
                                                     {% endfor %}
                                                 </details>
@@ -686,7 +686,6 @@
 
         var urls = {{ AccessControl.target_urls|safe }}
         var counts = {{ AccessControl.login_counts }}
-
         var acc_chart = new Chart(document.getElementById("acc_chart"), {
             type: 'bar',
             data: {
@@ -759,7 +758,6 @@
 
         var genSuccess = parseInt({{XXE.gen_chart.success}})
         var genFail = parseInt({{XXE.gen_chart.fail}})
-
         var xxe_gen_chart = new Chart(document.getElementById("xxe_gen_chart"), {
             type: 'doughnut',
             data: {
