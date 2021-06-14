@@ -10,17 +10,19 @@
     <body>
         <form action="{% url 'getIDPW' %}" method="POST">
             {% csrf_token %}
+        <br>
             <div>
-                ID : 
+                &nbsp;&nbsp;&nbsp;&nbsp;ID :
                 <input type="text" name="id" />
-                Password :
+                &nbsp;&nbsp;&nbsp;&nbsp;Password :
                 <input type="password" name="pw" />
-            </div>
+
             <input type="hidden" name="url" value="{{ url }}">
               {% for tool in tools %}
                   <input type="hidden" name="tools" value="{{ tool }}">
               {% endfor %}
             <button type="submit">Next</button>
+            </div>
         </form>
     </body>
 </html>

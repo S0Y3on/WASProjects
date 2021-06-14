@@ -13,8 +13,8 @@
             <form action="{% url 'getURL' %}" method="POST">
                 {% csrf_token %}
                 <div>
-                    URL : 
-                    <input type="text" name="url" />
+                    URL :
+                    <input type="text" name="url" style="width: 30%; margin-bottom: 20px"/>
                 </div>
                 <button type="submit">Next</button>
             </form>

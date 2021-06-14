@@ -61,7 +61,7 @@ mark {
 
 input::-moz-focus-inner {
 	border: 0;
-	padding: 0;
+	padding: 100px;
 }
 
 input, select, textarea {
@@ -2318,9 +2318,11 @@ input, select, textarea {
 		color: inherit;
 		display: block;
 		outline: 0;
-		padding: 0 1em;
+		padding: 0;
+		margin-left: 50px;
+		margin-bottom: 20px;
 		text-decoration: none;
-		width: 100%;
+		width: 30%;
 	}
 
 		input[type="text"]:invalid,
