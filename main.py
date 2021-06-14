@@ -59,7 +59,7 @@ def startApp(url : str, tools : list, user : dict) :
             #Injection.Injection(url)
             pass
         elif tool == "XXE" :
-        #   xxe.XXEPOINT(url, coll, atk)
+        #   xxe.XXEPOINT(url, coll)
             pass
         elif tool == "Broken Access Control" :
             pass

