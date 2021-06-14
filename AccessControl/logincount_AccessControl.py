@@ -1,9 +1,10 @@
 from selenium import webdriver
 from pymongo import MongoClient
 from pymongo.cursor import CursorType
-from datetime import datetime
+from datetime import date, datetime
 from bs4 import BeautifulSoup
 
+'''
 vulname = "Broken Access Control"
 type = "logincount"
 
@@ -62,8 +63,11 @@ options.add_argument("headless")
 
 browser = webdriver.Chrome('chromedriver.exe', options=options)
 count = 5
+'''
 
-def logincheck(login_url, user):
+def bef() :
+    '''
+    def logincheck(login_url, user):
     browser.get(login_url)
     global count
     # 로그인 정보 입력할 칸 찾기
@@ -81,43 +85,90 @@ def logincheck(login_url, user):
     # 로그인 클릭
     browser.find_element_by_css_selector("body > form > button").click()
 
-#url, 관리자계정 값 받기
-url, id, passwd = input('사용자 입력 값 : ').split()
-user = {
-    'login': id,
-    'password': passwd
-}
+    #url, 관리자계정 값 받기
+    url, id, passwd = input('사용자 입력 값 : ').split()
+    user = {
+        'login': id,
+        'password': passwd
+    }
 
-logincheck(url, user)
-date = datetime.utcnow()
+    logincheck(url, user)
+    date = datetime.utcnow()
 
-if (browser.current_url != url):
-    print("Success Login")
-    print(date)
-    print("Result = Success(로그인 횟수 제한되지 않음)")
-    limit = "X"
-    mongo.insert_item_one({"vulname":vulname,
-                           "Type":type,
-                           "logincount_TargetPage":url,
-                           "logincount_Count": count,
-                           "logincount_Policy":limit,
-                           "logincount_Time":date},
-                            "WAS", "test")
-                            #"testdb","adminTest3")
-else:
-    print("Fail Login")
-    print(date)
-    print("Result = Fail(로그인 횟수 %d회 제한됨)" %(count))
-    limit = "O"
-    mongo.insert_item_one({"vulname":vulname,
-                           "Type": type,
-                           "logincount_TargetPage":url,
-                           "logincount_Count": count,
-                           "logincount_Policy":limit,
-                           "logincount_Time":date},
-                            "WAS", "test")
-                            #"testdb","adminTest3")
+    if (browser.current_url != url):
+        print("Success Login")
+        print(date)
+        print("Result = Success(로그인 횟수 제한되지 않음)")
+        limit = "X"
+        mongo.insert_item_one({"vulname":vulname,
+                            "Type":type,
+                            "logincount_TargetPage":url,
+                            "logincount_Count": count,
+                            "logincount_Policy":limit,
+                            "logincount_Time":date},
+                                "WAS", "test")
+                                #"testdb","adminTest3")
+    else:
+        print("Fail Login")
+        print(date)
+        print("Result = Fail(로그인 횟수 %d회 제한됨)" %(count))
+        limit = "O"
+        mongo.insert_item_one({"vulname":vulname,
+                            "Type": type,
+                            "logincount_TargetPage":url,
+                            "logincount_Count": count,
+                            "logincount_Policy":limit,
+                            "logincount_Time":date},
+                                "WAS", "test")
+                                #"testdb","adminTest3")
+    '''
+#로그인페이지 판별여부 구현X
 
-def cntPoint(coll : MongoClient, urls : list, user : dict, chromedriverPATH : str) :
+def logincheck(browser, login_url, user) -> str:
+    browser.get(login_url)
+    count = 5
+    # 로그인 정보 입력할 칸 찾기
+    input_id = browser.find_element_by_css_selector("#id_login")
+    input_pw = browser.find_element_by_css_selector("#id_password")
+
+    # 로그인 정보 값 입력 실패여부를 판단
+    input_id.send_keys(user['id'])
+    for i in range(0, count+1):
+        if i < count:
+            input_pw.send_keys("hello")
+        else:
+            input_pw.send_keys(user['password'])
+
+    # 로그인 클릭
+    browser.find_element_by_css_selector("body > form > button").click()
+    return browser.current_url(), count
+
+def isHacked(url : str, browser_url : str, cnt : int) -> dict :
+    res = {
+        "logincount_TargetPage" : url,
+        "logincount_Count" : cnt,
+        "logincount_Policy" : None,
+    }
+
+    if (browser_url != url) :
+        res["logincount_Policy"] = "O"
+    else:
+        res["logincount_Policy"] = "X"
+    return res
+
+def cntPoint(url : list, user : dict, browser : webdriver) -> dict:
     #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
-    pass
+    login_url = ""
+    logincnt_schema = {
+        "vulname":"Broken Access Control",
+        "Type": "logincount",
+        "logincount_TargetPage" : None,
+        "logincount_Count" : None,
+        "logincount_Policy" : None,
+        "logincount_Time" : datetime.utcnow()
+    }
+    res = isHacked(url, logincheck(browser, login_url, user))
+    logincnt_schema["logincount_TargetPage"] = res["logincount_TargetPage"]
+    logincnt_schema["logincount_Count"] = res["logincount_Count"]
+    logincnt_schema["logincount_Policy"] = res["logincount_Policy"]
+    return logincnt_schema

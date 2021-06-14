@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from pymongo.cursor import CursorType
 from datetime import datetime
 
+'''
 class DBHandler:
     def __init__(self):
         #Local Test
@@ -55,10 +56,16 @@ destination_page=""
 vulname = "Broken Access Control"
 type = "dictpage"
 info = []
+'''
 
-def requestPart(param):
-    global destination_page
-    global success
+def checkEndURL(url : str) -> str :
+    if url[-1] != '/' :
+        url = url + '/'
+    return url
+
+
+
+def requestPart(param, url):
     destination_page="https://soy3on.pythonanywhere.com"
     URL = "https://soy3on.pythonanywhere.com" + "/" + param + "/"
     header = ""
@@ -74,14 +81,8 @@ def requestPart(param):
         info.append(param)
     time.sleep(0.01)
 
-#dictionary
-with open("dic.txt", "r") as f:
-    for line in f.readlines():
-        dic_count += 1
-        requestPart(line.strip())
-
 #random regex (a~z,length=5)
-
+'''
 fail = dic_count-success
 mongo.insert_item_one({"vulname":vulname,
                        "Type":type,
@@ -92,8 +93,24 @@ mongo.insert_item_one({"vulname":vulname,
                         "WAS","test")
                         #"testdb","adminTest1")
 print("Success : ", success, "Fail : ", fail)
+'''
 
 
-def dictPoint(coll : MongoClient, urls : list, user : dict) :
+def dictPoint(urls : list, user : dict) -> dict :
     #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
-    pass
+    dic_schema = {
+        "vulname":"Broken Access Control",
+        "Type" : "dictpage",
+        "dictpage_Destination_Page" : None,
+        "dictpage_info" : None,
+        "dictpage_Success" : None,
+        "dictpage_Fail" : None
+        }
+
+    #dictionary
+    with open("dic.txt", "r") as f:
+        for line in f.readlines():
+            dic_count += 1
+            requestPart(line.strip())
+
+    return dic_schema

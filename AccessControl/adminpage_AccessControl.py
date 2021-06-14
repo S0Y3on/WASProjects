@@ -140,6 +140,15 @@ mongo.insert_item_one({"vulname":vulname,
 
 print("Success : " , success, "Fail : " , fail)
 
-def adminPoint(coll : MongoClient, urls : list, user : dict, chromedriverPATH : str) :
+def adminPoint(urls : list, user : dict, chromedriverPATH : str) -> dict :
     #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
-    pass
+    adminpage_schema = {
+        "vulname" : "Broken Access Control",
+        "Type" : "adminpage",
+        "adminpage_Destination Page" : None,
+        "adminpage_info" : None,
+        "adminpage_Success" : None,
+        "adminpage_Fail" : None
+        }
+        
+    return adminpage_schema
