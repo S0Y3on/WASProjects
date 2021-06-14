@@ -18,6 +18,7 @@ class Schema:
         self.info = []
         self.url = ""
         self.client = MongoClient("127.0.0.1", 27017)
+        self.timestamp = datetime.utcnow()
 
     def insertDB(self, data, db_name=None, collection_name=None):
         result = self.client[db_name][collection_name].insert_one(data).inserted_id
@@ -57,10 +58,10 @@ class adminpage:
 
     def adminpage_login(self):
         browser = webdriver.Chrome(self.chromedriverPATH, options=self.options)
-        browser.get(self.url + "/accounts/login")
+        browser.get(self.url + "/admin")
         print(browser.current_url)
         # 로그인 정보 입력할 칸 찾기
-        input_id = browser.find_element_by_css_selector("#id_login")
+        input_id = browser.find_element_by_css_selector("#id_username")
         input_pw = browser.find_element_by_css_selector("#id_password")
 
         # 로그인 정보 값 입력
@@ -68,7 +69,7 @@ class adminpage:
         input_pw.send_keys(self.user['password'])
 
         # 로그인 클릭
-        browser.find_element_by_css_selector("body > form > button").click()
+        browser.find_element_by_css_selector("#login-form > div.submit-row > input[type=submit]").click()
         print(browser.current_url)
 
         # 관리자 페이지 로그인 후, 접근 가능한 페이지 찾기
@@ -96,6 +97,7 @@ class adminpage:
                              "Type": self.mongo.type,
                              "adminpage_Destination Page": self.mongo.url,
                              "adminpage_info": self.mongo.info,
+                             "adminpage_time":self.mongo.timestamp,
                              "adminpage_Success": self.mongo.success,
                              "adminpage_Fail": self.mongo.fail},
                             "WAS", "test")
