@@ -4,7 +4,7 @@ from sshtunnel import SSHTunnelForwarder
 MONGOURL = "ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com:"
 
 # 이 부분이 compass 포트 번호 넣는 부분입니다!
-MONGOPORT = 29238
+MONGOPORT = 29747
 
 # VM IP/DNS - Will depend on your VM
 EC2_URL = '''ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com'''
@@ -18,21 +18,7 @@ DB_USER = 'ubuntu'
 
 class mongoManager :
     def __init__(self, url) -> None:
-        # Create the tunnel
-        server = SSHTunnelForwarder(
-            (EC2_URL, 22),
-            ssh_username=DB_USER,  # I used an Ubuntu VM, it will be ec2-user for you
-            # 여기는 pem 파일 전체 경로 넣어주시면 됩니다
-            ssh_pkey='/Users/HANSUNG/PycharmProjects/was_xss/ha.pem',  # I had to give the full path of the keyfile here
-            remote_bind_address=(DB_URI, 27017),
-            local_bind_address=('127.0.0.1', 27017)
-        )
-        # Start the tunnel
-        print('SSH server start!')
-
-        # db 연결 끝나는 부분에 server.close()도 넣어 줘야 하는데 어디 부분일지 몰라서... 나중에 참고 해주세요!
-        server.start()
-        client = MongoClient(host='127.0.0.1', port=MONGOPORT)
+        client = MongoClient(MONGOURL+MONGOPORT)
         self.coll = client['WAS']['test']
 
     def caseAccessControl(self) -> dict :
