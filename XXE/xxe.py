@@ -5,7 +5,10 @@ from pymongo.cursor import CursorType
 import requests
 from bs4 import BeautifulSoup
 
-client_socket = ""
+server_host = "ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com"
+server_port = 1000 
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+client_socket.connect((server_host,server_port))
 session = requests.Session()
 
 class schema :
@@ -63,7 +66,7 @@ def insertItem(item : schema , mongo):
 # return value : None
 
 # XXE Point
-def XXEPOINT(target_urls : list , mongo):
+def XXEPOINT(target_urls : list , mongo , atk):
     genXxeAttack(target_urls , mongo)
 
     sendMsg(client_socket, "reset".encode())
