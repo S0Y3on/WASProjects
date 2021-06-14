@@ -11,7 +11,7 @@ import parmap
 import numpy as np
 from pymongo import MongoClient
 # 로그인이 필요한 경우 로그인 페이지 주소와 계정정보 받아서 세션 아이디 획득
-def get_sessionID():
+def get_driver():
     options = webdriver.ChromeOptions()
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     options.add_argument("headless")
@@ -25,7 +25,7 @@ def get_sessionID():
 # url_table에 저장된 url에 접속하여 파라미터 수집
 def get_param(keys, url_table):
     # 멀티프로세싱 적용시 각 프로세스마다 driver를 새로 만들어야 하는 문제 -> 세션관리 문제
-    driver = get_sessionID()
+    driver = get_driver()
     lists = keys
     domain_parse = re.compile('^https?:\/\/[^\/]+/')
     for url in lists:
@@ -240,7 +240,7 @@ def linked_page(url, table, driver):
 # 파라미터 정보까지 수집한 url_table을 사용해서 워드리스트에 있는 공격코드를 각 파라미터에 대입
 # 각 공격에 대한 요청 길이를 표준화하여 z_score가 +- 3보다 큰 경우 이상반응(성공)으로 간주함
 def fuzzing(keys, url_table, attack_info):
-    driver = get_sessionID()
+    driver = get_driver()
     #lists = keys.tolist() # 프로세스에게 할당된 url
     lists = keys
     cookies = driver.get_cookies()
@@ -310,9 +310,9 @@ def fuzzing(keys, url_table, attack_info):
                     avg = np.mean(values) # 응답 길이의 평균
                     std = np.std(values) # 응답 길이의 표준편차
                     if std != 0:
-                        if std < 1:
-                            std = 1 # 표준편차가 너무 작을 경우 미세한 글자수 변화에도 반응하기 때문에 최소한 1을 유지
-                        log_num =  1
+                        if std < 10:
+                            std = 10 # 표준편차가 너무 작을 경우 미세한 글자수 변화에도 반응하기 때문에 최소한 10을 유지
+                        log_num = 1
                         for p in attack_log.keys():
                             z_score = (attack_log[p] - avg)/std
                             # 특이점 발견 z_score +- 3
@@ -333,6 +333,8 @@ def fuzzing(keys, url_table, attack_info):
                     succeed_flag = False
                     cnt = 0
                     temp = {}
+                    temp['SQL_Injection'] = []
+                    temp['Command_Injection'] = []
                     attack_log = {}
                     origin_param = data[param]
                     for Payload in Payloads:
@@ -361,8 +363,8 @@ def fuzzing(keys, url_table, attack_info):
                     avg = np.mean(values)  # 응답 길이의 평균
                     std = np.std(values)  # 응답 길이의 표준편차
                     if std != 0:
-                        if std < 1:
-                            std = 1 # 표준편차가 너무 작을 경우 미세한 글자수 변화에도 반응하기 때문에 최소한 1을 유지
+                        if std < 10:
+                            std = 10 # 표준편차가 너무 작을 경우 미세한 글자수 변화에도 반응하기 때문에 최소한 10을 유지
                         log_num = 1
                         for p in attack_log.keys():
                             z_score = (attack_log[p] - avg) / std
@@ -392,8 +394,8 @@ def Injection(url):
         if str(url).count('/') == 2:
             url = str(url) + '/'
 
-    # 웹드라이버 세션 아이디 획득
-    driver = get_sessionID()
+    # 웹드라이버 객체 선언
+    driver = get_driver()
     # 연결된 페이지 URL 수집 및 파라미터 정보 수집
     url_table = linked_page(url, url_table, driver)
     for i in url_table.keys():
@@ -424,7 +426,7 @@ def Injection(url):
 
     my_client = MongoClient("mongodb://localhost:27017/")
     db = my_client['testdb']
-    collection = db['test1']
+    collection = db['test2']
     n = 1
     # 몽고디비 삽입
     for info in attack_info:
