@@ -6,149 +6,106 @@ from pymongo.cursor import CursorType
 from datetime import datetime
 import requests
 
-#DB관련 함수
-class DBHandler:
-    def __init__(self):
-        #Local Test
-        #host = "localhost"
-        #port = "27017"
-        host = "127.0.0.1"
-        port = "29528"
-        self.client = MongoClient(host, int(port))
 
-    def insert_item_one(self, data, db_name=None, collection_name=None):
+# DB관련 함수
+class Schema:
+    def __init__(self):
+        self.vulname = "Broken Access Control"
+        self.success = 0
+        self.fail = 0
+        self.result = ""
+        self.type = "adminpage"
+        self.info = []
+        self.url = ""
+        self.client = MongoClient("127.0.0.1", 27017)
+
+    def insertDB(self, data, db_name=None, collection_name=None):
         result = self.client[db_name][collection_name].insert_one(data).inserted_id
         return result
 
-    def insert_item_many(self, datas, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].insert_many(datas).inserted_ids
-        return result
 
-    def find_item_one(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].find_one(condition, {"_id": False})
-        return result
+class adminpage:
+    def __init__(self, urls, user, chromedriverPATH):
+        # Setting WebDriver Option
+        self.options = webdriver.ChromeOptions()
+        self.options.add_argument('headless')
+        self.chromedriverPATH = chromedriverPATH
+        self.url = urls
+        self.user = user
+        self.mongo = Schema()
 
-    def find_item(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].find(condition, {"_id": False}, no_cursor_timeout=True, cursor_type=CursorType.EXHAUST)
-        return result
+    def requestPart(self, param):
+        URL = self.url + param
+        self.mongo.url = self.url
+        header = ""
+        response = requests.get(URL)
+        if response.url == URL:
+            print("OK URL: " + URL)
+            self.mongo.result = "O"
+            date = datetime.utcnow()
+            print(date)
+            print("Result : ", self.mongo.result)
+            self.mongo.success += 1
+            self.mongo.info.append(param)
+        else:
+            print("Fail URL : " + URL)
+            self.mongo.result = "X"
+            date = datetime.utcnow()
+            print(date)
+            print("Result : ", self.mongo.result)
+            self.mongo.fail += 1
 
-    def delete_item_one(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].delete_one(condition)
-        return result
+    def adminpage_login(self):
+        browser = webdriver.Chrome(self.chromedriverPATH, options=self.options)
+        browser.get(self.url + "/accounts/login")
+        print(browser.current_url)
+        # 로그인 정보 입력할 칸 찾기
+        input_id = browser.find_element_by_css_selector("#id_login")
+        input_pw = browser.find_element_by_css_selector("#id_password")
 
-    def delete_item_many(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].delete_many(condition)
-        return result
+        # 로그인 정보 값 입력
+        input_id.send_keys(self.user['login'])
+        input_pw.send_keys(self.user['password'])
 
-    def update_item_one(self, condition=None, update_value=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].update_one(filter=condition, update=update_value)
-        return result
+        # 로그인 클릭
+        browser.find_element_by_css_selector("body > form > button").click()
+        print(browser.current_url)
 
-    def update_item_many(self, condition=None, update_value=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].update_many(filter=condition, update=update_value)
-        return result
+        # 관리자 페이지 로그인 후, 접근 가능한 페이지 찾기
+        html = browser.page_source
+        soup = BeautifulSoup(html, 'html.parser')
+        link = soup.select('a')
 
-    def text_search(self, text=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].find({"$text": {"$search": text}})
-        return result
-mongo = DBHandler()
+        # 출력 관리자 페이지 로그인 후 접근 가능한 페이지 목록
+        af = open('AccessPage.txt', 'w')
+        sys.stdout = af
 
-success = fail = 0
-result = ""
-vulname = "Broken Access Control"
-type = "adminpage"
-info = []
+        for n in link:
+            print(n.get('href'))
 
-def requestPart(param):
-    URL = "https://soy3on.pythonanywhere.com" + param
-    global success
-    global fail
-    global result
-    header = ""
-    response = requests.get(URL)
-    if response.url == URL:
-        print("OK URL: " + URL)
-        result = "O"
-        date = datetime.utcnow()
-        print(date)
-        print("Result : ", result)
-        success += 1
-        info.append(param)
-    else:
-        print("Fail URL : " + URL)
-        result = "X"
-        date = datetime.utcnow()
-        print(date)
-        print("Result : ",result)
-        fail += 1
+        sys.stdout = sys.__stdout__
+        af.close()
 
-# 옵션 생성
-options = webdriver.ChromeOptions()
-options.add_argument("headless")
+        # dictionary
+        with open("AccessPage.txt", "r") as f:
+            for line in f.readlines():
+                self.requestPart(line.strip())
+        browser.close()
 
-def adminpage_login(url, user) :
-    browser = webdriver.Chrome('chromedriver.exe', options=options)
-    browser.get(url)
+        self.mongo.insertDB({"vulname": self.mongo.vulname,
+                             "Type": self.mongo.type,
+                             "adminpage_Destination Page": self.mongo.url,
+                             "adminpage_info": self.mongo.info,
+                             "adminpage_Success": self.mongo.success,
+                             "adminpage_Fail": self.mongo.fail},
+                            "WAS", "test")
+        # "testdb","adminTest3")
 
-    #로그인 정보 입력할 칸 찾기
-    input_id = browser.find_element_by_css_selector("#id_username")
-    input_pw = browser.find_element_by_css_selector("#id_password")
+        print("Success : ", self.mongo.success, "Fail : ", self.mongo.fail)
 
-    #로그인 정보 값 입력
-    input_id.send_keys(user['login'])
-    input_pw.send_keys(user['password'])
 
-    #로그인 클릭
-    browser.find_element_by_css_selector("#login-form > div.submit-row > input[type=submit]").click()
-    print(browser.current_url)
-
-    #관리자 페이지 로그인 후, 접근 가능한 페이지 찾기
-    html = browser.page_source
-    soup = BeautifulSoup(html,'html.parser')
-    link = soup.select('a')
-
-    #출력 관리자 페이지 로그인 후 접근 가능한 페이지 목록
-    af = open('AccessPage.txt', 'w')
-    sys.stdout = af
-
-    for n in link:
-        print(n.get('href'))
-
-    sys.stdout = sys.__stdout__
-    af.close()
-
-    #dictionary
-    with open("AccessPage.txt", "r") as f:
-        for line in f.readlines():
-            requestPart(line.strip())
-
-url, id, passwd = input('사용자 입력 값 : ').split()
-user = {
-    'login': id,
-    'password': passwd
-}
-adminpage_login(url,user)
-
-mongo.insert_item_one({"vulname":vulname,
-                       "Type":type,
-                       "adminpage_Destination Page":url,
-                       "adminpage_info":info,
-                       "adminpage_Success":success,
-                       "adminpage_Fail":fail},
-                        "WAS", "test")
-                        # "testdb","adminTest3")
-
-print("Success : " , success, "Fail : " , fail)
-
-def adminPoint(urls : list, user : dict, chromedriverPATH : str) -> dict :
-    #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
-    adminpage_schema = {
-        "vulname" : "Broken Access Control",
-        "Type" : "adminpage",
-        "adminpage_Destination Page" : None,
-        "adminpage_info" : None,
-        "adminpage_Success" : None,
-        "adminpage_Fail" : None
-        }
-        
-    return adminpage_schema
+def adminPoint(coll: MongoClient, urls: str, user: dict, chromedriverPATH: str):
+    # 이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
+    run = adminpage(urls, user, chromedriverPATH)
+    run.adminpage_login()
+    pass
