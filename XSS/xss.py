@@ -7,16 +7,12 @@ from selenium import webdriver
 from pymongo import MongoClient
 
 
-DB_NAME = 'WAS'
-COLLECTION_NAME = 'test'
 
 
 class Schema:
-    def __init__(self):
-        host = "127.0.0.1"
-        port = "29748"
+    def __init__(self, coll):
         try:
-            self.client = MongoClient(host, int(port))
+            self.client = coll
         except:
             print('DB connect error')
         self.vulname = 'XSS'
@@ -41,8 +37,8 @@ class Schema:
         else:
             self.vultype = 'Stored'
 
-    def insertDB(self, data, db_name=DB_NAME, collection_name=COLLECTION_NAME):
-        result = self.client[db_name][collection_name].insert_one(data).inserted_id
+    def insertDB(self, data, client):
+        result = self.client.insert_one(data).inserted_id
         return result
 
 
@@ -83,15 +79,15 @@ class XssFuzzer:
                 print("No form tag")
         return href_link
 
-    def insertAttackCode(self, href_link):
+    def insertAttackCode(self, href_link, coll):
         # Chrome WebDriver
         try:
-            driver = webdriver.Chrome('chromedriver', chrome_options=self.options)
+            driver = webdriver.Chrome('/root/test/WASProjects/XSS/chromedriver', chrome_options=self.options)
         except:
             print('driver road error')
         # Link 하나 씩 검사
         for link in href_link:
-            Hack = Schema()
+            Hack = Schema(coll)
             input_resp = self.session.post(self.url + link)
             # input 태그 유무검사
             if input_resp.text.find('input') > 0:

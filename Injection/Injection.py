@@ -19,7 +19,7 @@ def get_driver():
     options.add_argument("disable-gpu")
     options.add_argument("disable-infobars")
     options.add_argument("--disable-extensions")
-    driver = Chrome('chromedriver.exe', chrome_options=options)
+    driver = Chrome('/root/test/WASProjects/Injection/chromedriver.exe', chrome_options=options)
     return driver
 
 # url_table에 저장된 url에 접속하여 파라미터 수집
@@ -385,7 +385,7 @@ def fuzzing(keys, url_table, attack_info):
             attack_info.append(info)
         return attack_info
 
-def Injection(url):
+def Injection(url, collection):
     url_table = {}
     url = url
 
@@ -424,9 +424,9 @@ def Injection(url):
     print("멀티프로세싱 경과시간: ", time.time()-start)
 
 
-    my_client = MongoClient("mongodb://localhost:27017/")
-    db = my_client['testdb']
-    collection = db['test2']
+    # my_client = MongoClient("mongodb://localhost:27017/")
+    # db = my_client['testdb']
+    # collection = db['test2']
     n = 1
     # 몽고디비 삽입
     for info in attack_info:

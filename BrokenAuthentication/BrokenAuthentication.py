@@ -11,8 +11,8 @@ import sys
 import time
 
 def send_file():
-    #IP = '127.0.0.1'
-    #PORT = 5005
+    IP = '127.0.0.1'
+    PORT = 5005
     filename = 'Broken_Authentication.txt'
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -88,7 +88,7 @@ class DBHandler:
         result = self.client[db_name][collection_name].find({"$text": {"$search": text}})
         return result
 
-def brokenAuthentication(url, id, password):
+def brokenAuthentication(url, user):
     #타겟페이지 접속
     access = requests.get(url)
 
@@ -117,11 +117,12 @@ def brokenAuthentication(url, id, password):
 
 
     #post requests data 완성
-    payload = {
-        reqid : id,
-        reqpw : password
-    }
-    
+    # payload = {
+    #     reqid : id,
+    #     reqpw : password
+    # }
+    payload = user
+
     #header 정보입력
     headers = {
    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \

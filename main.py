@@ -1,10 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
-from AccessControl import *
+
 from Injection import Injection
 from XSS import manage
 from XXE import xxe
+from AccessControl import main
+from BrokenAuthentication import BrokenAuthentication
 import socket
 # This is a sample Python script.
 
@@ -33,13 +35,13 @@ def findHref(url):
     for link in bs.findAll('a'):
         # 이동할 수 있는 url이 있는 경우
         if 'href' in link.attrs:
-            href_link.append(link.attrs['href'])
+            href_link.append(url + link.attrs['href'])
         else:
             print("No Hyperlink Link")
 
     for link in bs.findAll('form'):
         if 'action' in link.attrs:
-            href_link.append(link.attrs['action'])
+            href_link.append(url + link.attrs['action'])
         else:
             print("No form tag")
     return href_link
@@ -50,21 +52,17 @@ def startApp(url : str, tools : list, user : dict) :
     db = client['WAS']
     coll = db[url]
     atk = conATK()
-
     for tool in tools :
         if tool == "XSS" :
-        #    manage.XSSPoint(url, user)
-            pass
+           manage.XSSPoint(url, user, coll)
         elif tool == "Injection":
-            #Injection.Injection(url)
-            pass
+            Injection.Injection(url, coll)
         elif tool == "XXE" :
-        #   xxe.XXEPOINT(url, coll , atk)
-            pass
+            xxe.XXEPOINT(findHref(url), coll, atk)
         elif tool == "Broken Access Control" :
-            pass
+            main.accPoint(coll, url, user)
         elif tool == "Broken Authentication" :
-            pass
+            BrokenAuthentication.brokenAuthentication(url, user)
     atk.close()
     return True
 
@@ -72,5 +70,4 @@ def startApp(url : str, tools : list, user : dict) :
 if __name__ == '__main__':
     startApp()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
 

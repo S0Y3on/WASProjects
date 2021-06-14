@@ -1,15 +1,15 @@
 from XSS import xss
 
 
-def XSSPoint(url, user):
+def XSSPoint(url, user, coll):
     try:
-        run = XssFuzzer(url, user)
+        run = xss.XssFuzzer(url, user)
 
         # href 파서 (return list)
         Href = run.findHref()
 
         # 프로그램 실행
-        run.insertAttackCode(Href)
+        run.insertAttackCode(Href, coll)
         print('Success')
     except:
         print("Error")

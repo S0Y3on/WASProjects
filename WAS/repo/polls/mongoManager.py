@@ -1,10 +1,9 @@
 from pymongo import MongoClient
-from sshtunnel import SSHTunnelForwarder
 
 MONGOURL = "ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com:"
 
 # 이 부분이 compass 포트 번호 넣는 부분입니다!
-MONGOPORT = 29747
+MONGOPORT = '27017'
 
 # VM IP/DNS - Will depend on your VM
 EC2_URL = '''ec2-54-180-116-84.ap-northeast-2.compute.amazonaws.com'''
