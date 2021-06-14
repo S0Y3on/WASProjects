@@ -1,174 +1,91 @@
 from selenium import webdriver
 from pymongo import MongoClient
 from pymongo.cursor import CursorType
-from datetime import date, datetime
+from datetime import datetime
 from bs4 import BeautifulSoup
 
-'''
-vulname = "Broken Access Control"
-type = "logincount"
 
-#MongoDB 관련 함수
-class DBHandler:
+# MongoDB 관련 함수
+class Schema:
     def __init__(self):
-        #Local Test
-        host = "localhost"
-        port = "27017"
-        #host = "127.0.0.1"
-        #port = "29528"
-        self.client = MongoClient(host, int(port))
+        self.vulname = "Broken Access Control"
+        self.type = "logincount"
+        self.logincount_TargetPage = ""
+        self.logincount_Count = 5
+        self.logincount_Policy = ""
+        self.logincount_Time = ""
+        self.client = MongoClient("127.0.0.1", 27017)
 
-    def insert_item_one(self, data, db_name=None, collection_name=None):
+    def insertDB(self, data, db_name=None, collection_name=None):
         result = self.client[db_name][collection_name].insert_one(data).inserted_id
         return result
 
-    def insert_item_many(self, datas, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].insert_many(datas).inserted_ids
-        return result
-
-    def find_item_one(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].find_one(condition, {"_id": False})
-        return result
-
-    def find_item(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].find(condition, {"_id": False}, no_cursor_timeout=True, cursor_type=CursorType.EXHAUST)
-        return result
-
-    def delete_item_one(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].delete_one(condition)
-        return result
-
-    def delete_item_many(self, condition=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].delete_many(condition)
-        return result
-
-    def update_item_one(self, condition=None, update_value=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].update_one(filter=condition, update=update_value)
-        return result
-
-    def update_item_many(self, condition=None, update_value=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].update_many(filter=condition, update=update_value)
-        return result
-
-    def text_search(self, text=None, db_name=None, collection_name=None):
-        result = self.client[db_name][collection_name].find({"$text": {"$search": text}})
-        return result
-mongo = DBHandler()
 
 # 옵션 생성
-options = webdriver.ChromeOptions()
-options.add_argument("headless")
+class logincount:
+    def __init__(self, urls, user, chromedriverPATH):
+        # Setting WebDriver Option
+        self.options = webdriver.ChromeOptions()
+        self.options.add_argument('headless')
+        self.chromedriverPATH = chromedriverPATH
+        self.url = urls + "/accounts/login/"
+        self.user = user
+        self.mongo = Schema()
+        self.mongo.logincount_TargetPage = self.url
 
-#https://soy3on.pythonanywhere.com/accounts/login/ dream nana0813
+    def logincheck(self):
+        browser = webdriver.Chrome(self.chromedriverPATH, options=self.options)
+        for i in range(0, self.mongo.logincount_Count + 1):
+            browser.get(self.url)
+            # 로그인 정보 입력할 칸 찾기
+            input_id = browser.find_element_by_css_selector("#id_login")
+            input_pw = browser.find_element_by_css_selector("#id_password")
+            input_id.send_keys(self.user['login'])
 
-browser = webdriver.Chrome('chromedriver.exe', options=options)
-count = 5
-'''
+            if i < self.mongo.logincount_Count:
+                input_pw.send_keys(self.user['login'])
+            else:
+                input_pw.send_keys(self.user['password'])
 
-def bef() :
-    '''
-    def logincheck(login_url, user):
-    browser.get(login_url)
-    global count
-    # 로그인 정보 입력할 칸 찾기
-    input_id = browser.find_element_by_css_selector("#id_login")
-    input_pw = browser.find_element_by_css_selector("#id_password")
+            browser.find_element_by_css_selector("body > form > button").click()
 
-    # 로그인 정보 값 입력
-    input_id.send_keys(user['login'])
-    for i in range(0, count+1):
-        if i < count:
-            input_pw.send_keys("hello")
-        else:
-            input_pw.send_keys(user['password'])
-
-    # 로그인 클릭
-    browser.find_element_by_css_selector("body > form > button").click()
-
-    #url, 관리자계정 값 받기
-    url, id, passwd = input('사용자 입력 값 : ').split()
-    user = {
-        'login': id,
-        'password': passwd
-    }
-
-    logincheck(url, user)
-    date = datetime.utcnow()
-
-    if (browser.current_url != url):
-        print("Success Login")
-        print(date)
-        print("Result = Success(로그인 횟수 제한되지 않음)")
-        limit = "X"
-        mongo.insert_item_one({"vulname":vulname,
-                            "Type":type,
-                            "logincount_TargetPage":url,
-                            "logincount_Count": count,
-                            "logincount_Policy":limit,
-                            "logincount_Time":date},
+        if (browser.current_url != self.url):
+            print("Success Login")
+            print(self.mongo.logincount_Time)
+            print("CurrentURL = " + browser.current_url)
+            print("Result = Success(로그인 횟수 제한되지 않음)")
+            self.mongo.logincount_Policy = "X"
+            self.mongo.insertDB({"vulname": self.mongo.vulname,
+                                 "Type": self.mongo.type,
+                                 "logincount_TargetPage": self.mongo.logincount_TargetPage,
+                                 "logincount_Count": self.mongo.logincount_Count,
+                                 "logincount_Policy": self.mongo.logincount_Policy,
+                                 "logincount_Time": self.mongo.logincount_Time},
                                 "WAS", "test")
-                                #"testdb","adminTest3")
-    else:
-        print("Fail Login")
-        print(date)
-        print("Result = Fail(로그인 횟수 %d회 제한됨)" %(count))
-        limit = "O"
-        mongo.insert_item_one({"vulname":vulname,
-                            "Type": type,
-                            "logincount_TargetPage":url,
-                            "logincount_Count": count,
-                            "logincount_Policy":limit,
-                            "logincount_Time":date},
-                                "WAS", "test")
-                                #"testdb","adminTest3")
-    '''
-#로그인페이지 판별여부 구현X
-
-def logincheck(browser, login_url, user) -> str:
-    browser.get(login_url)
-    count = 5
-    # 로그인 정보 입력할 칸 찾기
-    input_id = browser.find_element_by_css_selector("#id_login")
-    input_pw = browser.find_element_by_css_selector("#id_password")
-
-    # 로그인 정보 값 입력 실패여부를 판단
-    input_id.send_keys(user['id'])
-    for i in range(0, count+1):
-        if i < count:
-            input_pw.send_keys("hello")
+            # "testdb","adminTest3")
         else:
-            input_pw.send_keys(user['password'])
+            print("Fail Login")
+            print(self.mongo.logincount_Time)
+            print("CurrentURL = " + browser.current_url)
+            print("Result = Fail(로그인 횟수 %d회 제한됨)" % (self.mongo.logincount_Count))
+            self.mongo.logincount_Policy = "O"
+            self.mongo.insertDB({"vulname": self.mongo.vulname,
+                                 "Type": self.mongo.type,
+                                 "logincount_TargetPage": self.mongo.logincount_TargetPage,
+                                 "logincount_Count": self.mongo.logincount_Count,
+                                 "logincount_Policy": self.mongo.logincount_Policy,
+                                 "logincount_Time": self.mongo.logincount_Time},
+                                "WAS", "test")
+            # "testdb","adminTest3")
+        browser.close()
 
-    # 로그인 클릭
-    browser.find_element_by_css_selector("body > form > button").click()
-    return browser.current_url(), count
+    def loginrun(self):
+        self.mongo.logincount_Time = datetime.utcnow()
+        self.logincheck()
 
-def isHacked(url : str, browser_url : str, cnt : int) -> dict :
-    res = {
-        "logincount_TargetPage" : url,
-        "logincount_Count" : cnt,
-        "logincount_Policy" : None,
-    }
 
-    if (browser_url != url) :
-        res["logincount_Policy"] = "O"
-    else:
-        res["logincount_Policy"] = "X"
-    return res
-
-def cntPoint(url : list, user : dict, browser : webdriver) -> dict:
-    #이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
-    login_url = ""
-    logincnt_schema = {
-        "vulname":"Broken Access Control",
-        "Type": "logincount",
-        "logincount_TargetPage" : None,
-        "logincount_Count" : None,
-        "logincount_Policy" : None,
-        "logincount_Time" : datetime.utcnow()
-    }
-    res = isHacked(url, logincheck(browser, login_url, user))
-    logincnt_schema["logincount_TargetPage"] = res["logincount_TargetPage"]
-    logincnt_schema["logincount_Count"] = res["logincount_Count"]
-    logincnt_schema["logincount_Policy"] = res["logincount_Policy"]
-    return logincnt_schema
+def cntPoint(coll: MongoClient, urls: list, user: dict, chromedriverPATH: str):
+    # 이 지점을 스타트 포인트로 잡고 짜시면 될거같습니다
+    run = logincount(urls, user, chromedriverPATH)
+    run.loginrun()
+    pass
